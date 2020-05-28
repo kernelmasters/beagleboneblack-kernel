@@ -1,0 +1,974 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Device Tree Source for K2G SOC
+ *
+ * Copyright (C) 2016-2017 Texas Instruments Incorporated - http://www.ti.com/
+ */
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/pinctrl/keystone.h>
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	compatible = "ti,k2g","ti,keystone";
+	model = "Texas Instruments K2G SoC";
+	#address-cells = <2>;
+	#size-cells = <2>;
+	interrupt-parent = <&gic>;
+
+	chosen { };
+
+	aliases {
+		serial0 = &uart0;
+		serial1 = &uart1;
+		serial2 = &uart2;
+		i2c0 = &i2c0;
+		i2c1 = &i2c1;
+		i2c2 = &i2c2;
+		rproc0 = &dsp0;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			compatible = "arm,cortex-a15";
+			device_type = "cpu";
+			reg = <0>;
+		};
+	};
+
+	gic: interrupt-controller@2561000 {
+		compatible = "arm,gic-400", "arm,cortex-a15-gic";
+		#interrupt-cells = <3>;
+		interrupt-controller;
+		reg = <0x0 0x02561000 0x0 0x1000>,
+		      <0x0 0x02562000 0x0 0x2000>,
+		      <0x0 0x02564000 0x0 0x2000>,
+		      <0x0 0x02566000 0x0 0x2000>;
+		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) |
+				IRQ_TYPE_LEVEL_HIGH)>;
+	};
+
+	timer {
+		compatible = "arm,armv7-timer";
+		interrupts =
+			<GIC_PPI 13
+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+			<GIC_PPI 14
+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+			<GIC_PPI 11
+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+			<GIC_PPI 10
+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+	};
+
+	pmu {
+		compatible = "arm,cortex-a15-pmu";
+		interrupts = <GIC_SPI 4 IRQ_TYPE_EDGE_RISING>;
+	};
+
+	usbphy {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		compatible = "simple-bus";
+
+		usb0_phy: usb-phy@0 {
+			compatible = "usb-nop-xceiv";
+			reg = <0>;
+			status = "disabled";
+		};
+
+		usb1_phy: usb-phy@1 {
+			compatible = "usb-nop-xceiv";
+			reg = <1>;
+			status = "disabled";
+		};
+	};
+
+	soc0: soc@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		#pinctrl-cells = <1>;
+		compatible = "ti,keystone","simple-bus";
+		ranges = <0x0 0x0 0x0 0xc0000000>;
+		dma-ranges = <0x80000000 0x8 0x00000000 0x80000000>;
+
+		msm_ram: msmram@c000000 {
+			compatible = "mmio-sram";
+			reg = <0x0c000000 0x100000>;
+			ranges = <0x0 0x0c000000 0x100000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			sram-mpm@0 {
+				compatible = "ti,keystone-dsp-msm-ram";
+				reg = <0x0 0x80000>;
+			};
+
+			sram-bm@f7000 {
+				reg = <0x000f7000 0x8000>;
+			};
+		};
+
+		k2g_pinctrl: pinmux@2621000 {
+			compatible = "pinctrl-single";
+			reg = <0x02621000 0x410>;
+			pinctrl-single,register-width = <32>;
+			pinctrl-single,function-mask = <0x001b0007>;
+		};
+
+		devctrl: device-state-control@2620000 {
+			compatible = "ti,keystone-devctrl", "syscon", "simple-mfd";
+			reg = <0x02620000 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x02620000 0x1000>;
+
+			kirq0: keystone_irq@2a0 {
+				compatible = "ti,keystone-irq";
+				reg = <0x2a0 0x10>;
+				interrupts = <GIC_SPI 1 IRQ_TYPE_EDGE_RISING>;
+				interrupt-controller;
+				#interrupt-cells = <1>;
+				ti,syscon-dev = <&devctrl 0x2a0>;
+			};
+
+			dspgpio0: keystone_dsp_gpio@240 {
+				compatible = "ti,keystone-dsp-gpio";
+				reg = <0x240 0x4>;
+				gpio-controller;
+				#gpio-cells = <2>;
+				gpio,syscon-dev = <&devctrl 0x240>;
+			};
+
+			prussgpio0: keystone-pruss-gpio@26c {
+				compatible = "ti,keystone-dsp-gpio";
+				reg = <0x26c 0x4>;
+				gpio-controller;
+				#gpio-cells = <2>;
+				gpio,syscon-dev = <&devctrl 0x26c>;
+			};
+
+			prussgpio1: keystone-pruss-gpio@270 {
+				compatible = "ti,keystone-dsp-gpio";
+				reg = <0x270 0x4>;
+				gpio-controller;
+				#gpio-cells = <2>;
+				gpio,syscon-dev = <&devctrl 0x270>;
+			};
+
+			prussgpio2: keystone-pruss-gpio@274 {
+				compatible = "ti,keystone-dsp-gpio";
+				reg = <0x274 0x4>;
+				gpio-controller;
+				#gpio-cells = <2>;
+				gpio,syscon-dev = <&devctrl 0x274>;
+			};
+
+			prussgpio3: keystone-pruss-gpio@278 {
+				compatible = "ti,keystone-dsp-gpio";
+				reg = <0x278 0x4>;
+				gpio-controller;
+				#gpio-cells = <2>;
+				gpio,syscon-dev = <&devctrl 0x278>;
+			};
+
+			pcie_devid: pcie-devid@128 {
+				compatible = "syscon";
+				reg = <0x00000128 0x4>;
+			};
+
+			pcie_mode: pcie-mode@14c {
+				compatible = "syscon";
+				reg = <0x0000014c 0x4>;
+			};
+		};
+
+		uart0: serial@2530c00 {
+			compatible = "ti,da830-uart", "ns16550a";
+			current-speed = <115200>;
+			reg-shift = <2>;
+			reg-io-width = <4>;
+			reg = <0x02530c00 0x100>;
+			interrupts = <GIC_SPI 164 IRQ_TYPE_EDGE_RISING>;
+			clocks = <&k2g_clks 0x2c 0>;
+			power-domains = <&k2g_pds 0x2c>;
+			status = "disabled";
+		};
+
+		uart1: serial@2531000 {
+			compatible = "ti,da830-uart", "ns16550a";
+			current-speed = <115200>;
+			reg-shift = <2>;
+			reg-io-width = <4>;
+			reg = <0x02531000 0x100>;
+			interrupts = <GIC_SPI 165 IRQ_TYPE_EDGE_RISING>;
+			clocks = <&k2g_clks 0x2d 0>;
+			power-domains = <&k2g_pds 0x2d>;
+			status = "disabled";
+		};
+
+		uart2: serial@2531400 {
+			compatible = "ti,da830-uart", "ns16550a";
+			current-speed = <115200>;
+			reg-shift = <2>;
+			reg-io-width = <4>;
+			reg = <0x02531400 0x100>;
+			interrupts = <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>;
+			clocks = <&k2g_clks 0x2e 0>;
+			power-domains = <&k2g_pds 0x2e>;
+			status = "disabled";
+		};
+
+		dcan0: can@260b200 {
+			compatible = "ti,am4372-d_can", "ti,am3352-d_can";
+			reg = <0x0260B200 0x200>;
+			interrupts = <GIC_SPI 190 IRQ_TYPE_EDGE_RISING>;
+			status = "disabled";
+			power-domains = <&k2g_pds 0x0008>;
+			clocks = <&k2g_clks 0x0008 1>;
+		};
+
+		dcan1: can@260b400 {
+			compatible = "ti,am4372-d_can", "ti,am3352-d_can";
+			reg = <0x0260B400 0x200>;
+			interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
+			status = "disabled";
+			power-domains = <&k2g_pds 0x0009>;
+			clocks = <&k2g_clks 0x0009 1>;
+		};
+
+		i2c0: i2c@2530000 {
+			compatible = "ti,keystone-i2c";
+			reg = <0x02530000 0x400>;
+			clocks = <&k2g_clks 0x003a 0>;
+			power-domains = <&k2g_pds 0x003a>;
+			interrupts = <GIC_SPI 88 IRQ_TYPE_EDGE_RISING>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "disabled";
+		};
+
+		i2c1: i2c@2530400 {
+			compatible = "ti,keystone-i2c";
+			reg = <0x02530400 0x400>;
+			clocks = <&k2g_clks 0x003b 0>;
+			power-domains = <&k2g_pds 0x003b>;
+			interrupts = <GIC_SPI 89 IRQ_TYPE_EDGE_RISING>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "disabled";
+		};
+
+		i2c2: i2c@2530800 {
+			compatible = "ti,keystone-i2c";
+			reg = <0x02530800 0x400>;
+			clocks = <&k2g_clks 0x003c 0>;
+			power-domains = <&k2g_pds 0x003c>;
+			interrupts = <GIC_SPI 90 IRQ_TYPE_EDGE_RISING>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "disabled";
+		};
+
+		dsp0: dsp@10800000 {
+			compatible = "ti,k2g-dsp";
+			reg = <0x10800000 0x00100000>,
+			      <0x10e00000 0x00008000>,
+			      <0x10f00000 0x00008000>;
+			reg-names = "l2sram", "l1pram", "l1dram";
+			power-domains = <&k2g_pds 0x0046>;
+			ti,syscon-dev = <&devctrl 0x844>;
+			resets = <&k2g_reset 0x0046 0x1>;
+			interrupt-parent = <&kirq0>;
+			interrupts = <0 8>;
+			interrupt-names = "vring", "exception";
+			kick-gpios = <&dspgpio0 27 0>;
+			status = "disabled";
+		};
+
+		msgmgr: msgmgr@2a00000 {
+			compatible = "ti,k2g-message-manager";
+			#mbox-cells = <2>;
+			reg-names = "queue_proxy_region",
+				    "queue_state_debug_region";
+			reg = <0x02a00000 0x400000>, <0x028c3400 0x400>;
+			interrupt-names = "rx_005",
+					  "rx_057";
+			interrupts = <GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>;
+		};
+
+		pmmc: pmmc@2921c00 {
+			compatible = "ti,k2g-sci";
+			/*
+			 * In case of rare platforms that does not use k2g as
+			 * system master, use /delete-property/
+			 */
+			ti,system-reboot-controller;
+			mbox-names = "rx", "tx";
+			mboxes= <&msgmgr 5 2>,
+				<&msgmgr 0 0>;
+			reg-names = "debug_messages";
+			reg = <0x02921c00 0x400>;
+
+			k2g_pds: power-controller {
+				compatible = "ti,sci-pm-domain";
+				#power-domain-cells = <1>;
+			};
+
+			k2g_clks: clocks {
+				compatible = "ti,k2g-sci-clk";
+				#clock-cells = <2>;
+			};
+
+			k2g_reset: reset-controller {
+				compatible = "ti,sci-reset";
+				#reset-cells = <2>;
+			};
+		};
+
+		clock_event: timer@2210000 {
+			compatible = "ti,keystone-timer";
+			reg = <0x02210000 0x50>;
+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH
+					GIC_SPI 18 IRQ_TYPE_LEVEL_LOW>;
+			clocks = <&k2g_clks 0x1e 0>;
+		};
+
+		gpio0: gpio@2603000 {
+			compatible = "ti,k2g-gpio", "ti,keystone-gpio";
+			reg = <0x02603000 0x100>;
+			gpio-controller;
+			#gpio-cells = <2>;
+
+			interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
+			interrupt-controller;
+			#interrupt-cells = <2>;
+			ti,ngpio = <144>;
+			ti,davinci-gpio-unbanked = <0>;
+			clocks = <&k2g_clks 0x001b 0x0>;
+			clock-names = "gpio";
+		};
+
+		gpio1: gpio@260a000 {
+			compatible = "ti,k2g-gpio", "ti,keystone-gpio";
+			reg = <0x0260a000 0x100>;
+			gpio-controller;
+			#gpio-cells = <2>;
+			interrupts = <GIC_SPI 442 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 443 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 444 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 445 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 446 IRQ_TYPE_EDGE_RISING>;
+			interrupt-controller;
+			#interrupt-cells = <2>;
+			ti,ngpio = <68>;
+			ti,davinci-gpio-unbanked = <0>;
+			clocks = <&k2g_clks 0x001c 0x0>;
+			clock-names = "gpio";
+		};
+
+		dss: dss@02540000 {
+			compatible = "ti,k2g-dss";
+			reg =	<0x02540000 0x400>,
+				<0x02550000 0x1000>,
+				<0x02557000 0x1000>,
+				<0x0255a800 0x100>,
+				<0x0255ac00 0x100>;
+			reg-names = "cfg", "common", "vid1", "ovr1", "vp1";
+			clocks =	<&k2g_clks 0x2 0>,
+					<&k2g_clks 0x2 1>;
+			clock-names = "fck", "vp1";
+			interrupts = <GIC_SPI 247 IRQ_TYPE_EDGE_RISING>;
+
+			power-domains = <&k2g_pds 0x2>;
+			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges;
+
+			max-memory-bandwidth = <230000000>;
+		};
+
+		edma0: edma@2700000 {
+			compatible = "ti,k2g-edma3-tpcc", "ti,edma3-tpcc";
+			reg =	<0x02700000 0x8000>;
+			reg-names = "edma3_cc";
+			interrupts = <GIC_SPI 200 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 216 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 217 IRQ_TYPE_EDGE_RISING>;
+			interrupt-names = "edma3_ccint", "emda3_mperr",
+					  "edma3_ccerrint";
+			dma-requests = <64>;
+			#dma-cells = <2>;
+
+			ti,tptcs = <&edma0_tptc0 7>, <&edma0_tptc1 0>;
+
+			ti,edma-memcpy-channels = <32 33 34 35>;
+
+			power-domains = <&k2g_pds 0x3f>;
+		};
+
+		edma0_tptc0: tptc@2760000 {
+			compatible = "ti,k2g-edma3-tptc", "ti,edma3-tptc";
+			reg =	<0x02760000 0x400>;
+			power-domains = <&k2g_pds 0x3f>;
+		};
+
+		edma0_tptc1: tptc@2768000 {
+			compatible = "ti,k2g-edma3-tptc", "ti,edma3-tptc";
+			reg =	<0x02768000 0x400>;
+			power-domains = <&k2g_pds 0x3f>;
+		};
+
+		edma1: edma@2728000 {
+			compatible = "ti,k2g-edma3-tpcc", "ti,edma3-tpcc";
+			reg =	<0x02728000 0x8000>;
+			reg-names = "edma3_cc";
+			interrupts = <GIC_SPI 208 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 219 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 220 IRQ_TYPE_EDGE_RISING>;
+			interrupt-names = "edma3_ccint", "emda3_mperr",
+					  "edma3_ccerrint";
+			dma-requests = <64>;
+			#dma-cells = <2>;
+
+			ti,tptcs = <&edma1_tptc0 7>, <&edma1_tptc1 0>;
+
+			/*
+			 * memcpy is disabled, can be enabled with:
+			 * ti,edma-memcpy-channels = <12 13 14 15>;
+			 * for example.
+			 */
+
+			power-domains = <&k2g_pds 0x4f>;
+		};
+
+		edma1_tptc0: tptc@27b0000 {
+			compatible = "ti,k2g-edma3-tptc", "ti,edma3-tptc";
+			reg =	<0x027b0000 0x400>;
+			power-domains = <&k2g_pds 0x4f>;
+		};
+
+		edma1_tptc1: tptc@27b8000 {
+			compatible = "ti,k2g-edma3-tptc", "ti,edma3-tptc";
+			reg =	<0x027b8000 0x400>;
+			power-domains = <&k2g_pds 0x4f>;
+		};
+
+		mmc0: mmc@23000000 {
+			compatible = "ti,k2g-sdhci";
+			reg = <0x23000000 0x400>;
+			interrupts = <GIC_SPI 96 IRQ_TYPE_EDGE_RISING>;
+			bus-width = <4>;
+			no-1-8-v;
+			max-frequency = <96000000>;
+			power-domains = <&k2g_pds 0xb>;
+			clocks = <&k2g_clks 0xb 1>, <&k2g_clks 0xb 2>;
+			clock-names = "fck", "mmchsdb_fck";
+			status = "disabled";
+		};
+
+		mmc1: mmc@23100000 {
+			compatible = "ti,k2g-sdhci";
+			reg = <0x23100000 0x400>;
+			interrupts = <GIC_SPI 97 IRQ_TYPE_EDGE_RISING>;
+			bus-width = <8>;
+			no-1-8-v;
+			non-removable;
+			max-frequency = <96000000>;
+			power-domains = <&k2g_pds 0xc>;
+			clocks = <&k2g_clks 0xc 1>, <&k2g_clks 0xc 2>;
+			clock-names = "fck", "mmchsdb_fck";
+		};
+
+		qspi: spi@2940000 {
+			compatible = "ti,k2g-qspi", "cdns,qspi-nor";
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0x02940000 0x1000>,
+			      <0x24000000 0x4000000>;
+			interrupts = <GIC_SPI 198 IRQ_TYPE_EDGE_RISING>;
+			cdns,fifo-depth = <256>;
+			cdns,fifo-width = <4>;
+			cdns,trigger-address = <0x24000000>;
+			clocks = <&k2g_clks 0x43 0x0>;
+			power-domains = <&k2g_pds 0x43>;
+			status = "disabled";
+		};
+
+		mcasp0: mcasp@2340000 {
+			compatible = "ti,am33xx-mcasp-audio";
+			reg = <0x02340000 0x2000>,
+			      <0x21804000 0x1000>;
+			reg-names = "mpu","dat";
+			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "tx", "rx";
+			dmas = <&edma0 24 1>, <&edma0 25 1>;
+			dma-names = "tx", "rx";
+			power-domains = <&k2g_pds 0x4>;
+			clocks = <&k2g_clks 0x4 0>;
+			clock-names = "fck";
+			status = "disabled";
+		};
+
+		mcasp1: mcasp@2342000 {
+			compatible = "ti,am33xx-mcasp-audio";
+			reg = <0x02342000 0x2000>,
+			      <0x21804400 0x1000>;
+			reg-names = "mpu","dat";
+			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "tx", "rx";
+			dmas = <&edma1 48 1>, <&edma1 49 1>;
+			dma-names = "tx", "rx";
+			power-domains = <&k2g_pds 0x5>;
+			clocks = <&k2g_clks 0x5 0>;
+			clock-names = "fck";
+			status = "disabled";
+		};
+
+		mcasp2: mcasp@2344000 {
+			compatible = "ti,am33xx-mcasp-audio";
+			reg = <0x02344000 0x2000>,
+			      <0x21804800 0x1000>;
+			reg-names = "mpu","dat";
+			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+			interrupt-names = "tx", "rx";
+			dmas = <&edma1 50 1>, <&edma1 51 1>;
+			dma-names = "tx", "rx";
+			power-domains = <&k2g_pds 0x6>;
+			clocks = <&k2g_clks 0x6 0>;
+			clock-names = "fck";
+			status = "disabled";
+		};
+
+		keystone_usb0: keystone-dwc3@2680000 {
+			compatible = "ti,keystone-dwc3";
+			#address-cells = <1>;
+			#size-cells = <1>;
+			reg = <0x2680000 0x10000>;
+			interrupts = <GIC_SPI 128 IRQ_TYPE_EDGE_RISING>;
+			ranges;
+			dma-coherent;
+			dma-ranges;
+			status = "disabled";
+			power-domains = <&k2g_pds 0x0016>;
+
+			usb0: usb@2690000 {
+				compatible = "snps,dwc3";
+				reg = <0x2690000 0x10000>;
+				interrupts = <GIC_SPI 128 IRQ_TYPE_EDGE_RISING>;
+				maximum-speed = "high-speed";
+				dr_mode = "otg";
+				usb-phy = <&usb0_phy>;
+				status = "disabled";
+			};
+		};
+
+		keystone_usb1: keystone-dwc3@2580000 {
+			compatible = "ti,keystone-dwc3";
+			#address-cells = <1>;
+			#size-cells = <1>;
+			reg = <0x2580000 0x10000>;
+			interrupts = <GIC_SPI 144 IRQ_TYPE_EDGE_RISING>;
+			ranges;
+			dma-coherent;
+			dma-ranges;
+			status = "disabled";
+			power-domains = <&k2g_pds 0x0017>;
+
+			usb1: usb@2590000 {
+				compatible = "snps,dwc3";
+				reg = <0x2590000 0x10000>;
+				interrupts = <GIC_SPI 144 IRQ_TYPE_EDGE_RISING>;
+				maximum-speed = "high-speed";
+				dr_mode = "otg";
+				usb-phy = <&usb1_phy>;
+				status = "disabled";
+			};
+		};
+
+		ecap0: pwm@21d1800 {
+			compatible = "ti,k2g-ecap", "ti,am3352-ecap";
+			#pwm-cells = <3>;
+			reg = <0x021d1800 0x60>;
+			power-domains = <&k2g_pds 0x38>;
+			clocks = <&k2g_clks 0x38 0>;
+			clock-names = "fck";
+			status = "disabled";
+		};
+
+		ecap1: pwm@21d1c00 {
+			compatible = "ti,k2g-ecap", "ti,am3352-ecap";
+			#pwm-cells = <3>;
+			reg = <0x021d1c00 0x60>;
+			power-domains = <&k2g_pds 0x39>;
+			clocks = <&k2g_clks 0x39 0x0>;
+			clock-names = "fck";
+			status = "disabled";
+		};
+
+		spi0: spi@21805400 {
+			compatible = "ti,keystone-spi";
+			reg = <0x21805400 0x200>;
+			num-cs = <4>;
+			ti,davinci-spi-intr-line = <0>;
+			interrupts = <GIC_SPI 64 IRQ_TYPE_EDGE_RISING>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			power-domains = <&k2g_pds 0x0010>;
+			clocks = <&k2g_clks 0x0010 0>;
+		};
+
+		spi1: spi@21805800 {
+			compatible = "ti,keystone-spi";
+			reg = <0x21805800 0x200>;
+			num-cs = <4>;
+			ti,davinci-spi-intr-line = <0>;
+			interrupts = <GIC_SPI 66 IRQ_TYPE_EDGE_RISING>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			power-domains = <&k2g_pds 0x0011>;
+			clocks = <&k2g_clks 0x0011 0>;
+		};
+
+		spi2: spi@21805c00 {
+			compatible = "ti,keystone-spi";
+			reg = <0x21805C00 0x200>;
+			num-cs = <4>;
+			ti,davinci-spi-intr-line = <0>;
+			interrupts = <GIC_SPI 68 IRQ_TYPE_EDGE_RISING>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			power-domains = <&k2g_pds 0x0012>;
+			clocks = <&k2g_clks 0x0012 0>;
+		};
+
+		spi3: spi@21806000 {
+			compatible = "ti,keystone-spi";
+			reg = <0x21806000 0x200>;
+			num-cs = <4>;
+			ti,davinci-spi-intr-line = <0>;
+			interrupts = <GIC_SPI 70 IRQ_TYPE_EDGE_RISING>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			power-domains = <&k2g_pds 0x0013>;
+			clocks = <&k2g_clks 0x0013 0>;
+		};
+
+		wdt: wdt@02250000 {
+			compatible = "ti,keystone-wdt", "ti,davinci-wdt";
+			reg = <0x02250000 0x80>;
+			power-domains = <&k2g_pds 0x22>;
+			clocks = <&k2g_clks 0x22 0>;
+		};
+
+		emif: emif@21010000 {
+			compatible = "ti,emif-keystone";
+			reg = <0x21010000 0x200>;
+			interrupts = <GIC_SPI 123 IRQ_TYPE_EDGE_RISING>;
+		};
+
+		pruss_soc_bus0: pruss-soc-bus@20aa6004 {
+			compatible = "ti,k2g-pruss-soc-bus";
+			reg = <0x20aa6004 0x4>;
+			power-domains = <&k2g_pds 0x0014>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges;
+			dma-ranges;
+			dma-coherent;
+
+			pruss0: pruss@20a80000 {
+				compatible = "ti,k2g-pruss";
+				reg = <0x20a80000 0x40000>;
+				interrupts = <GIC_SPI 224 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 225 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 226 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 227 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 228 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 230 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 231 IRQ_TYPE_EDGE_RISING>;
+				interrupt-names = "host2", "host3", "host4",
+						  "host5", "host6", "host8",
+						  "host9";
+				#address-cells = <1>;
+				#size-cells = <1>;
+				ranges;
+				dma-ranges;
+				dma-coherent;
+
+				pruss0_mem: memories@20a80000 {
+					reg = <0x20a80000 0x2000>,
+					      <0x20a82000 0x2000>,
+					      <0x20a90000 0x10000>;
+					reg-names = "dram0", "dram1",
+						    "shrdram2";
+				};
+
+				pruss0_cfg: cfg@20aa6000 {
+					compatible = "syscon";
+					reg = <0x20aa6000 0x2000>;
+				};
+
+				pruss0_iep: iep@20aae000 {
+					compatible = "syscon";
+					reg = <0x20aae000 0x31c>;
+				};
+
+				pruss0_mii_rt: mii-rt@20ab2000 {
+					compatible = "syscon";
+					reg = <0x20ab2000 0x70>;
+				};
+
+				pruss0_intc: interrupt-controller@20aa0000 {
+					compatible = "ti,k2g-pruss-intc";
+					reg = <0x20aa0000 0x2000>;
+					interrupt-controller;
+					#interrupt-cells = <1>;
+				};
+
+				pru0_0: pru@20ab4000 {
+					compatible = "ti,k2g-pru";
+					reg = <0x20ab4000 0x3000>,
+					      <0x20aa2000 0x400>,
+					      <0x20aa2400 0x100>;
+					reg-names = "iram", "control", "debug";
+					firmware-name = "k2g-pru0_0-fw";
+					interrupt-parent = <&pruss0_intc>;
+					interrupts = <16>, <17>;
+					interrupt-names = "vring", "kick";
+				};
+
+				pru0_1: pru@20ab8000 {
+					compatible = "ti,k2g-pru";
+					reg = <0x20ab8000 0x3000>,
+					      <0x20aa4000 0x400>,
+					      <0x20aa4400 0x100>;
+					reg-names = "iram", "control", "debug";
+					firmware-name = "k2g-pru0_1-fw";
+					interrupt-parent = <&pruss0_intc>;
+					interrupts = <18>, <19>;
+					interrupt-names = "vring", "kick";
+				};
+
+				pruss0_mdio: mdio@20ab2400 {
+					compatible = "ti,davinci_mdio";
+					reg = <0x20ab2400 0x90>;
+					clocks = <&k2g_clks 0x0014 1>;
+					clock-names = "fck";
+					#address-cells = <1>;
+					#size-cells = <0>;
+					bus_freq = <2500000>;
+					status = "disabled";
+				};
+			};
+		};
+
+		pruss_soc_bus1: pruss-soc-bus@20ae6004 {
+			compatible = "ti,k2g-pruss-soc-bus";
+			reg = <0x20ae6004 0x4>;
+			power-domains = <&k2g_pds 0x0015>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges;
+			dma-ranges;
+			dma-coherent;
+
+			pruss1: pruss@20ac0000 {
+				compatible = "ti,k2g-pruss";
+				reg = <0x20ac0000 0x40000>;
+				interrupts = <GIC_SPI 232 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 233 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 234 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 235 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 236 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 238 IRQ_TYPE_EDGE_RISING>,
+					     <GIC_SPI 239 IRQ_TYPE_EDGE_RISING>;
+				interrupt-names = "host2", "host3", "host4",
+						  "host5", "host6", "host8",
+						  "host9";
+				#address-cells = <1>;
+				#size-cells = <1>;
+				ranges;
+				dma-ranges;
+				dma-coherent;
+
+				pruss1_mem: memories@20ac0000 {
+					reg = <0x20ac0000 0x2000>,
+					      <0x20ac2000 0x2000>,
+					      <0x20ad0000 0x10000>;
+					reg-names = "dram0", "dram1",
+						    "shrdram2";
+				};
+
+				pruss1_cfg: cfg@20ae6000 {
+					compatible = "syscon";
+					reg = <0x20ae6000 0x2000>;
+				};
+
+				pruss1_iep: iep@20aee000 {
+					compatible = "syscon";
+					reg = <0x20aee000 0x31c>;
+				};
+
+				pruss1_mii_rt: mii-rt@20af2000 {
+					compatible = "syscon";
+					reg = <0x20af2000 0x70>;
+				};
+
+				pruss1_intc: interrupt-controller@20ae0000 {
+					compatible = "ti,k2g-pruss-intc";
+					reg = <0x20ae0000 0x2000>;
+					interrupt-controller;
+					#interrupt-cells = <1>;
+				};
+
+				pru1_0: pru@20af4000 {
+					compatible = "ti,k2g-pru";
+					reg = <0x20af4000 0x3000>,
+					      <0x20ae2000 0x400>,
+					      <0x20ae2400 0x100>;
+					reg-names = "iram", "control", "debug";
+					firmware-name = "k2g-pru1_0-fw";
+					interrupt-parent = <&pruss1_intc>;
+					interrupts = <16>, <17>;
+					interrupt-names = "vring", "kick";
+				};
+
+				pru1_1: pru@20af8000 {
+					compatible = "ti,k2g-pru";
+					reg = <0x20af8000 0x3000>,
+					      <0x20ae4000 0x400>,
+					      <0x20ae4400 0x100>;
+					reg-names = "iram", "control", "debug";
+					firmware-name = "k2g-pru1_1-fw";
+					interrupt-parent = <&pruss1_intc>;
+					interrupts = <18>, <19>;
+					interrupt-names = "vring", "kick";
+				};
+
+				pruss1_mdio: mdio@20af2400 {
+					compatible = "ti,davinci_mdio";
+					reg = <0x20af2400 0x90>;
+					clocks = <&k2g_clks 0x0015 1>;
+					clock-names = "fck";
+					#address-cells = <1>;
+					#size-cells = <0>;
+					bus_freq = <2500000>;
+					status = "disabled";
+				};
+			};
+		};
+
+		mdio: mdio@4200f00 {
+			compatible = "ti,keystone_mdio", "ti,davinci_mdio";
+			reg = <0x04200f00 0x100>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			clocks = <&k2g_clks 0x0018 3>;
+			clock-names = "fck";
+			power-domains = <&k2g_pds 0x0018>;
+			status = "disabled";
+			bus_freq = <2500000>;
+		};
+		#include "keystone-k2g-netcp.dtsi"
+
+		pcie0_phy: phy@2320000 {
+			#phy-cells = <0>;
+			compatible = "ti,keystone-serdes-pcie";
+			reg = <0x02320000 0x4000>;
+			link-rate-kbps = <5000000>;
+			num-lanes = <1>;
+			status = "disabled";
+			power-domains = <&k2g_pds 0x0019>;
+			clocks = <&k2g_clks 0x0019 0>;
+			clock-names = "fck";
+		};
+
+		pcie0: pcie@21800000 {
+			compatible = "ti,keystone-pcie", "snps,dw-pcie";
+			reg =  <0x21800000 0x1000>, <0x21801000 0x1000>, <0x21802000 0x1000>;
+			reg-names = "app", "dbics", "config";
+			power-domains = <&k2g_pds 0x0019>;
+			clocks = <&k2g_clks 0x0019 0>;
+			clock-names = "fck";
+			#address-cells = <3>;
+			#size-cells = <2>;
+			ranges = <0x81000000 0 0		0x23250000 0 0x4000
+				  0x82000000 0 0x70000000	0x70000000 0 0x10000000>;
+			ti,syscon-pcie-id = <&pcie_devid>;
+			ti,syscon-pcie-mode = <&pcie_mode>;
+			status = "disabled";
+			device_type = "pci";
+			num-lanes = <1>;
+			phys = <&pcie0_phy>;
+			dma-coherent;
+			num-ob-windows = <32>;
+			num-viewport = <32>;
+			/* error interrupt */
+			interrupts = <GIC_SPI 60 IRQ_TYPE_EDGE_RISING>;
+			#interrupt-cells = <1>;
+			interrupt-map-mask = <0 0 0 7>;
+			interrupt-map = <0 0 0 1 &pcie_intc0 0 IRQ_TYPE_EDGE_RISING>, /* INT A */
+					<0 0 0 2 &pcie_intc0 1 IRQ_TYPE_EDGE_RISING>, /* INT B */
+					<0 0 0 3 &pcie_intc0 2 IRQ_TYPE_EDGE_RISING>, /* INT C */
+					<0 0 0 4 &pcie_intc0 3 IRQ_TYPE_EDGE_RISING>; /* INT D */
+
+			pcie_msi_intc0: msi-interrupt-controller {
+				interrupt-controller;
+				#interrupt-cells = <1>;
+				interrupt-parent = <&gic>;
+				interrupts = <GIC_SPI 52 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 53 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 54 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 55 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 56 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 57 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 58 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 59 IRQ_TYPE_EDGE_RISING>;
+			};
+
+			pcie_intc0: legacy-interrupt-controller {
+				interrupt-controller;
+				#interrupt-cells = <2>;
+				interrupt-parent = <&gic>;
+				interrupts = <GIC_SPI 48 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 49 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 50 IRQ_TYPE_EDGE_RISING>,
+					<GIC_SPI 51 IRQ_TYPE_EDGE_RISING>;
+			};
+		};
+
+		pcie0_ep: pcie-ep@21800000 {
+			compatible = "ti,keystone-pcie-ep";
+			power-domains = <&k2g_pds 0x0019>;
+			clocks = <&k2g_clks 0x19 0x0>;
+			clock-names = "fck";
+			#size-cells = <2>;
+			reg =  <0x21800000 0x1000>, <0x21801000 0x2000>, <0x70000000 0x10000000>;
+			reg-names = "app", "dbics", "addr_space";
+			interrupts = <GIC_SPI 60 IRQ_TYPE_EDGE_RISING>;
+			num-lanes = <1>;
+			num-ib-windows = <4>;
+			num-ob-windows = <32>;
+			ti,syscon-pcie-mode = <&pcie_mode>;
+			dma-coherent;
+			status = "disabled";
+		};
+	};
+};
