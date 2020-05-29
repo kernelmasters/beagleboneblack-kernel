@@ -32,7 +32,8 @@ BRedU='\033[4;31m'         # Underline
 
 make_pkg () {
 
-	KERNEL_UTS=$(cat "include/generated/utsrelease.h" | awk '{print $3}' | sed 's/\"//g' )
+	KERNEL_UTS="4.19.94-Kernel-Masters"
+	#KERNEL_UTS=$(cat "include/generated/utsrelease.h" | awk '{print $3}' | sed 's/\"//g' )
         deployfile="-${pkg}.tar.gz"
         tar_options="--create --gzip --file"
 
@@ -135,15 +136,6 @@ else
                 exit 0
         fi
 fi
-
-
-if [ -f .config ] ; then
-echo "${Red}~/.config file found. skip configuration"
-else
-echo "${Red}~/.config file not found. To configure the board"
-echo "${Purple}make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- omap2plus_defconfig${NC}"
-#make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- omap2plus_defconfig
-fi
 echo "";echo ""
 
 echo "${BRed}${BRedU}Step3: Build Kernel source code${NC}"
@@ -152,13 +144,13 @@ echo "${Green}-----------------------------"
 echo "${Red}Build Kernel source code"
 echo "${Green}-----------------------------${NC}"
 echo "${Purple}make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage -j${cpus}${NC}"
-#make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage -j${cpus}
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage -j${cpus}
 
 echo "${Green}-----------------------------"
 echo "${Red}Build Device Tree Source."
 echo "${Green}-----------------------------${NC}"
 echo "${Purple}make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- dtbs -j${cpus}${NC}"
-#make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- dtbs -j${cpus}
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- dtbs -j${cpus}
 echo "";echo ""
 
 echo "${BRed}${BRedU}Step4: Build Kernel modules${NC}"
@@ -167,7 +159,7 @@ echo "${Green}-----------------------------"
 echo "${Red}Build Kernel Modules."
 echo "${Green}-----------------------------${NC}"
 echo "${Purple}make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- modules -j${cpus}${NC}"
-#make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- modules -j${cpus}
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- modules -j${cpus}
 echo "";echo ""
 
 echo "${BRed}${BRedU}Step5: Install Kernel modules,dtb and zImage${NC}"
@@ -175,20 +167,20 @@ echo ""
 echo "${Green}-----------------------------"
 echo "${Red}Install Kernel Modules."
 echo "${Green}-----------------------------${NC}"
-#make_modules_pkg
+make_modules_pkg
 
 
 echo "${Green}-----------------------------"
 echo "${Red}Install DTB."
 echo "${Green}-----------------------------${NC}"
-#make_dtbs_pkg
+make_dtbs_pkg
 
 echo "${Green}-----------------------------"
 echo "${Red}Install zImage."
 echo "${Green}-----------------------------${NC}"
 echo "${Purple}make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- install -j${cpus}${NC}"
 image="zImage"
-KERNEL_UTS=$(cat "include/generated/utsrelease.h" | awk '{print $3}' | sed 's/\"//g' )
+KERNEL_UTS="4.19.94-Kernel-Masters"
 #make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-  INSTALL_PATH=/home/$USER/out/ install 
         if [ -f "/home/$USER/out/${KERNEL_UTS}.${image}" ] ; then
                 rm -rf "/home/$USER/out/${KERNEL_UTS}.${image}" || true
@@ -214,8 +206,16 @@ while [ ! -z "$1" ] ; do
                 echo "${Red}./km_build_uboot.sh [--board <value>]${NC}"
                 ;;
         --board)
-                echo "${Purple}scp /home/$USER/out/vmlinuz-${KERNEL_UTS}  /home/$USER/out/${KERNEL_UTS}-modules.tar.gz /home/$USER/out/${KERNEL_UTS}-dtbs.tar.gz km@192.168.1.1$2:~/$NC"
-                scp /home/$USER/out/vmlinuz-${KERNEL_UTS}  /home/$USER/out/${KERNEL_UTS}-modules.tar.gz /home/$USER/out/${KERNEL_UTS}-dtbs.tar.gz km@192.168.1.1$2:~/
+		echo "${Purple}cp /home/$USER/out/${KERNEL_UTS}-zImage /media/board$2/vmlinuz-${KERNEL_UTS}${NC}"
+		cp /home/$USER/out/${KERNEL_UTS}-zImage /media/board$2/vmlinuz-${KERNEL_UTS}
+		echo "${Purple}cp arch/arm/boot/dts/am335x-boneblack.dtb /meida/board$2/${NC}"
+		cp arch/arm/boot/dts/am335x-boneblack.dtb /media/board$2/
+		echo "${Purple} echo uname_r=${KERNEL_UTS} > /media/board$2/uEnv.txt ${NC}"
+		echo uname_r=${KERNEL_UTS} > /media/board$2/uEnv.txt
+		echo "${Purple} echo board_no=$2 >> /media/board$2/uEnv.txti${NC}"
+		echo board_no=$2 >> /media/board$2/uEnv.txt
+		#echo "${Purple}scp /home/$USER/out/vmlinuz-${KERNEL_UTS}  /home/$USER/out/${KERNEL_UTS}-modules.tar.gz /home/$USER/out/${KERNEL_UTS}-dtbs.tar.gz km@192.168.1.1$2:~/$NC"
+                #scp /home/$USER/out/vmlinuz-${KERNEL_UTS}  /home/$USER/out/${KERNEL_UTS}-modules.tar.gz /home/$USER/out/${KERNEL_UTS}-dtbs.tar.gz km@192.168.1.1$2:~/
                 ;;
         esac
         shift
