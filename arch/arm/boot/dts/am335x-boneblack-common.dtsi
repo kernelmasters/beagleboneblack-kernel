@@ -83,7 +83,7 @@
 		reg = <0x70>;
 
 		pinctrl-names = "default";
-		pinctrl-0 = <&nxp_hdmi_bonelt_pins>;
+	/*	pinctrl-0 = <&nxp_hdmi_bonelt_pins>; */
 
 		/* Convert 24bit BGR to RGB, e.g. cross red and blue wiring */
 		/* video-ports = <0x234501>; */

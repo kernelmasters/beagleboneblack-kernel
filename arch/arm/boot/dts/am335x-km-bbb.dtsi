@@ -1,0 +1,125 @@
+
+/ {
+        gpio-keys {
+                pinctrl-names = "default";
+                pinctrl-0 = <&km_gpio_pins>;
+                compatible = "gpio-keys";
+	};
+};
+
+
+&am33xx_pinmux {
+ 
+	/* For modifing this you need to refer BBB P8 & P9 HeaderTable.pdf */
+
+	km_gpio_pins: pinmux_km_gpio_pins {
+		pinctrl-single,pins = <
+		0x0d8   0x07    /*P8_31(LCD_DATA14.GPIO0_10-->USER_LED)Mode7|*/
+		0x0dc   0x37    /*P8_32(LCD_DATA15.GPIO0_11-->USER_SW)Mode7|*/
+		0x034   0x0f    /*P8_11(GPIO1_13-->LCD_D5)Mode7|*/
+		0x030   0x0f    /*P8_12(GPIO1_12-->LCD_D4)Mode7|*/
+		0x028   0x37    /*P8_14(GPIO0_26-->SW_UP)Mode7|*/
+		0x03c   0x0f    /*P8_15(GPIO1_15-->LCD_D7)Mode7|*/
+		0x038   0x0f    /*P8_16(GPIO1_14-->LCD_D6)Mode7|*/
+		0x02c   0x37    /*P8_17(GPIO0_27-->SW_DOWN)Mode7|*/
+		0x0e0   0x0f    /*P8_27(LCD_VSYNC.GPIO2_22-->LCD_RS)Mode7*/
+		0x0e8   0x0f    /*P8_28(LCD_PCLK.GPIO2_24-->LCD_EN)Mode7*/
+		0x0e4   0x0f    /*P8_29(LCD_HSYNC.GPIO2_23-->LCD_RW)M0de7*/
+		0x0ec   0x27    /*P8_30(LCD_AC_BIAS.GPIO2_25-->KEY_PAD_8)Mode7|*/
+		0x0d4   0x0f    /*P8_33(LCD_DATA13.GPIO0_9-->BUZZER)Mode7|*/
+		0x0b8   0x2f    /*P8_39(LCD_DATA6.GPIO2_12-->KEY_PAD_6)Mode7*/
+		0x0bc   0x2f    /*P8_40(LCD_DATA7.GPIO2_13-->KEY_PAD_7)Mode7|*/
+		0x0b0   0x2f    /*P8_41(LCD_DATA4.GPIO2_10-->KEY_PAD_4)Mode7|*/
+		0x0b4   0x2f    /*P8_42(LCD_DATA5.GPIO2_11-->KEY_PAD_5)Mode7|*/
+		0x0a8   0x2f    /*P8_43(LCD_DATA2.GPIO2_8-->KEY_PAD_2)Mode7*/
+		0x0ac   0x2f    /*P8_44(LCD_DATA3.GPIO2_9-->KEY_PAD_3)Mode7*/
+		0x0a0   0x2f    /*P8_45(LCD_DATA0.GPIO2_6-->KEY_PAD_0)Mode7*/
+		0x0a4   0x2f    /*P8_46(LCD_DATA1.GPIO2_7-->KEY_PAD_1)Mode7*/
+		0x040   0x2f    /*P9_15(GPIO1_16-->ADXL345_INT)Mode7|Pull_UPDN Disable|RxActive*/
+		0x044   0x0f    /*P9_23(GPIO1_17-->UART2_CTL)*/
+		0x1ac   0x0f    /*P9_25(GPIO3_21-->UART1_CTL)*/
+		0x1a4   0x27    /*P9_27(GPIO3_19-->ENC_INT)*/
+		0x078   0x0f    /*P9_12(GPIO1_28-->RS485_CONTROL)Mode7|Pull_UPDN Disable*/
+		>;
+	};
+
+	uart1_pins: pinmux_uart1_pins {              
+		pinctrl-single,pins = <
+		0x184   0x00    /*P9_24(UART1_TXD)*/
+		0x180   0x00    /*P9_26(UART1_RXD)*/
+                >;
+	};
+
+	uart2_pins: pinmux_uart2_pins {
+		pinctrl-single,pins = <
+   	    0x154   0x01    /*P9_21(UART2_TXD)*/
+      	    0x150   0x01    /*P9_22(UART2_RXD)*/
+                >;
+	};
+
+	uart4_pins:pinmux_uart4_pins {
+		pinctrl-single,pins = <		
+       0x070   0x06    /*P9_11(UART4_RXD-->UART4_RXD)*/
+       0x074   0x06    /*P9_13(UART4_TXD-->UART4_TXD)*/
+		>;
+	};
+
+	uart5_pins: pinmux_uart5_pins {
+                  pinctrl-single,pins = <
+          0x0c0   0x04    /*P8_37(LCD_DATA8.UART5_TXD)Mode4|*/
+          0x0c4   0x04    /*P8_38(LCD_DATA9.UART5_RXD)Mode4|*/
+          	>;
+	};
+
+	i2c1_pins:pinmux_i2c1_pins{
+		pinctrl-single,pins = <
+       0x15c   0x02    /*P9_17(I2C1_SCL)Using Default Func*/
+       0x158   0x02    /*P9_18(I2C1_SDA)*/
+		>;
+	};
+
+	spi1_pins:pimux_spi1_pins {
+		pinctrl-single,pins = <
+       0x19c   0x03    /*P9_28(SPI1_CS0)*/
+       0X194   0X03    /*P9_29(SPI1_D0)*/
+       0X198   0X03    /*P9_30(SPI1_D1)*/
+       0X190   0X03    /*P9_31(SPI1_SCLK)*/
+		>;
+	};
+
+	can0_pins:pinmux_can0_pins{
+		pinctrl-single,pins =<
+       0x17c   0x02    /*P9_19(I2C2_SCL-->CAN0_RX)*/
+       0x178   0x02    /*P9_20(I2C2_SDA-->CAN0_TX)*/
+		>;
+	};
+};
+
+
+&uart1 {
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart1_pins>;
+        
+	status = "okay";
+};
+
+&uart2 {
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart2_pins>;
+
+        status = "okay";
+};
+
+&uart4 {
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart4_pins>;
+
+        status = "okay";
+};
+
+&uart5 {
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart5_pins>;
+
+        status = "okay";
+};

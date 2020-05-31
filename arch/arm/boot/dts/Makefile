@@ -1,5 +1,18 @@
 # SPDX-License-Identifier: GPL-2.0
 
+ifdef CONFIG_SOC_AM33XX
+CONFIG_KM-BBB=y
+CONFIG_SOC_AM33XX=0
+CONFIG_SOC_TI81XX=0
+CONFIG_SOC_DRA7XX=0
+CONFIG_ARCH_OMAP2=0
+CONFIG_ARCH_OMAP3=0
+CONFIG_ARCH_OMAP4=0
+CONFIG_SOC_OMAP5=0
+CONFIG_SOC_AM43XX=0
+CONFIG_SOC_DRA7XX=0
+endif
+
 ifeq ($(CONFIG_OF_OVERLAY),y)
 DTC_FLAGS += -@
 endif
@@ -695,6 +708,8 @@ dtb-$(CONFIG_SOC_TI81XX) += \
 	dm8148-t410.dtb \
 	dm8168-evm.dtb \
 	dra62x-j5eco-evm.dtb
+dtb-$(CONFIG_KM-BBB) += \
+	am335x-boneblack.dtb
 dtb-$(CONFIG_SOC_AM33XX) += \
 	am335x-baltos-ir2110.dtb \
 	am335x-baltos-ir3220.dtb \
