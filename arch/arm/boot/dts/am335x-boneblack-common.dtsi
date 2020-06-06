@@ -105,21 +105,22 @@
 	system-power-controller;
 };
 
-&mcasp0	{
+/*&mcasp0	{
 	#sound-dai-cells = <0>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&mcasp0_pins>;
 	status = "okay";
-	op-mode = <0>;	/* MCASP_IIS_MODE */
+	op-mode = <0>;	
 	tdm-slots = <2>;
-	serial-dir = <	/* 0: INACTIVE, 1: TX, 2: RX */
+	serial-dir = <	
 			0 0 1 0
 		>;
 	tx-num-evt = <32>;
 	rx-num-evt = <32>;
 };
+*/
 
-/ {
+/* / {
 	clk_mcasp0_fixed: clk_mcasp0_fixed {
 		#clock-cells = <0>;
 		compatible = "fixed-clock";
@@ -130,7 +131,7 @@
 		#clock-cells = <0>;
 		compatible = "gpio-gate-clock";
 		clocks = <&clk_mcasp0_fixed>;
-		enable-gpios = <&gpio1 27 0>; /* BeagleBone Black Clk enable on GPIO1_27 */
+		enable-gpios = <&gpio1 27 0>; 
 	};
 
 	sound {
@@ -150,3 +151,4 @@
 		};
 	};
 };
+*/

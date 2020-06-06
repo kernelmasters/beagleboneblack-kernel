@@ -36,12 +36,17 @@
 		0x0a0   0x2f    /*P8_45(LCD_DATA0.GPIO2_6-->KEY_PAD_0)Mode7*/
 		0x0a4   0x2f    /*P8_46(LCD_DATA1.GPIO2_7-->KEY_PAD_1)Mode7*/
 		0x040   0x2f    /*P9_15(GPIO1_16-->ADXL345_INT)Mode7|Pull_UPDN Disable|RxActive*/
-		0x044   0x0f    /*P9_23(GPIO1_17-->UART2_CTL)*/
 		0x1ac   0x0f    /*P9_25(GPIO3_21-->UART1_CTL)*/
-		0x1a4   0x27    /*P9_27(GPIO3_19-->ENC_INT)*/
+		0x1a4   0x27    /*P9_27(GPIO3_19-->UART2_CTL)*/
 		0x078   0x0f    /*P9_12(GPIO1_28-->RS485_CONTROL)Mode7|Pull_UPDN Disable*/
 		>;
 	};
+                
+	enc28j60_pin: pinmux_enc28j60_pins {
+		   pinctrl-single,pins = <
+			 0x044 0x37	/* gpio_49 enc28j60_INT P9_23 */
+			   >;
+	   };
 
 	uart1_pins: pinmux_uart1_pins {              
 		pinctrl-single,pins = <
@@ -122,4 +127,64 @@
         pinctrl-0 = <&uart5_pins>;
 
         status = "okay";
+};
+
+&i2c1 {
+        pinctrl-names = "default";
+        //pinctrl-0 = <&i2c0_pins>;
+        pinctrl-0 = <&i2c1_pins>;
+
+        status = "okay";
+        clock-frequency = <100000>;
+
+	rtcds: rtcds@68 {
+                compatible = "ds,ds1307";
+                reg = <0x68>;
+                #address-cells = <1>;
+                #size-cells = <1>;
+        };
+      /*  baseboard_eeprom: baseboard_eeprom@50 {
+                compatible = "atmel,24c256";
+                reg = <0x50>;
+
+                #address-cells = <1>;
+                #size-cells = <1>;
+                baseboard_data: baseboard_data@0 {
+                        reg = <0 0x100>;
+                };
+        };*/
+};
+
+
+&spi0 {
+        pinctrl-names = "default";
+        pinctrl-0 = <&spi1_pins>;
+
+	spidev0: spi@0 {
+		 compatible = "spidev";
+		 reg = <0>;
+		 spi-max-frequency = <16000000>;
+	 };
+
+};
+
+&spi1 {
+        pinctrl-names = "default";
+        pinctrl-0 = <&spi1_pins>;
+
+	enc28j60: ethernet@0 {
+                   compatible = "microchip,enc28j60";
+                   pinctrl-names = "default";
+                   pinctrl-0 = <&enc28j60_pin>;
+                   reg = <0>;
+                   interrupt-parent = <&gpio1>;
+                   interrupts = <17 2>;
+                   spi-max-frequency = <12000000>;
+                };
+	spidev1: spi@1 {
+		 compatible = "spidev";
+		 reg = <1>;
+		 spi-max-frequency = <16000000>;
+	 };
+
 };

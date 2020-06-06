@@ -1429,6 +1429,8 @@ static int omap2_mcspi_probe(struct platform_device *pdev)
 	u32			regs_offset = 0;
 	struct device_node	*node = pdev->dev.of_node;
 	const struct of_device_id *match;
+	
+	printk("******** %s:%s:%d ************ \n",__FILE__,__func__,__LINE__);
 
 	if (of_property_read_bool(node, "spi-slave"))
 		master = spi_alloc_slave(&pdev->dev, sizeof(*mcspi));
@@ -1536,6 +1538,7 @@ static int omap2_mcspi_probe(struct platform_device *pdev)
 	if (status < 0)
 		goto disable_pm;
 
+	printk("******** %s:%s:%d ************ \n",__FILE__,__func__,__LINE__);
 	return status;
 
 disable_pm:
