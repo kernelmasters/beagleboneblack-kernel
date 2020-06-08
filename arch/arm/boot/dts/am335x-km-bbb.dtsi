@@ -5,6 +5,7 @@
                 pinctrl-0 = <&km_gpio_pins>;
                 compatible = "gpio-keys";
 	};
+
 };
 
 
@@ -83,12 +84,12 @@
 		>;
 	};
 
-	spi1_pins:pimux_spi1_pins {
+	spi1_pins:pinmux_spi1_pins {
 		pinctrl-single,pins = <
-       0x19c   0x03    /*P9_28(SPI1_CS0)*/
-       0X194   0X03    /*P9_29(SPI1_D0)*/
-       0X198   0X03    /*P9_30(SPI1_D1)*/
-       0X190   0X03    /*P9_31(SPI1_SCLK)*/
+			AM33XX_PADCONF(AM335X_PIN_MCASP0_FSX, PIN_INPUT_PULLUP, MUX_MODE3)	/* SPI1_MOSI */
+			AM33XX_PADCONF(AM335X_PIN_MCASP0_AXR0, PIN_INPUT_PULLUP, MUX_MODE3)	/* SPI1_MISO */
+			AM33XX_PADCONF(AM335X_PIN_MCASP0_ACLKX, PIN_INPUT_PULLUP, MUX_MODE3)    /* SPI1_SCLK */
+			AM33XX_PADCONF(AM335X_PIN_MCASP0_AHCLKR, PIN_INPUT_PULLUP, MUX_MODE3)	/* SPI0_CS0 (NBATTSS) */
 		>;
 	};
 
@@ -158,7 +159,7 @@
 
 &spi0 {
         pinctrl-names = "default";
-        pinctrl-0 = <&spi1_pins>;
+       /* pinctrl-0 = <&spi0_pins>;*/
 
 	spidev0: spi@0 {
 		 compatible = "spidev";
@@ -188,3 +189,10 @@
 	 };
 
 };
+
+
+ /*      0x19c   0x33   P9_28(SPI1_CS0)
+       0X194   0X33    /*P9_29(SPI1_D0)
+       0X198   0X33    /*P9_30(SPI1_D1)
+       0X190   0X33    /*P9_31(SPI1_SCLK)
+*/

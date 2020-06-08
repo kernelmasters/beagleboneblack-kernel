@@ -94,10 +94,30 @@ echo "${Green}-----------------------------${NC}"
 
 if [ -d /home/$USER/out ] ; then
 	echo "${Red}/home/$USER/out folder is found${NC}"
-	else
-		echo "${Purple}/home/$USER/out folder is not found.${NC}"
-		mkdir -p /home/$USER/out/
+else
+	echo "${Purple}/home/$USER/out folder is not found.${NC}"
+	mkdir -p /home/$USER/out/
 fi
+
+echo "${Green}-----------------------------"
+echo "${Red}Check Cross Compiler Toolcahin:"
+echo "${Green}-----------------------------${NC}"
+
+if [ -d "/home/$USER/opt/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin" ] ; then
+        echo "cross_compile tool chain found."
+else
+        echo "cross_compile tool chain not found. Install ..."
+	mkdir ~/opt
+        cd ~/opt
+        wget http://142.93.218.33/elinux/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf.tar.xz
+	tar -xvf gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf.tar.xz
+	rm -r gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf.tar.xz
+        export PATH=/home/$USER/opt/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin:$PATH
+        sh -c "echo 'export PATH=/home/$USER/opt/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin:'$'PATH' >>  /home/$USER/.bashrc"
+	cd -
+        echo "cross_compile tool chain install successfully"
+fi
+
 
 echo "${Green}-----------------------------"
 echo -n ${Red}"Check No. of CPUS:${NC}"

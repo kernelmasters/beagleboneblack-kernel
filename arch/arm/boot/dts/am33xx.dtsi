@@ -35,10 +35,10 @@
 		usb1 = &usb1;
 		phy0 = &usb0_phy;
 		phy1 = &usb1_phy;
-		spi1 = &spi1;
 		ethernet0 = &cpsw_emac0;
 		ethernet1 = &cpsw_emac1;
 		spi0 = &spi0;
+		spi1 = &spi1;
 
 	};
 
@@ -563,7 +563,7 @@
 			ti,hwmods = "i2c2";
 			reg = <0x4802a000 0x1000>;
 			interrupts = <71>;
-			status = "disabled";
+			status = "okay";
 		};
 
 		i2c2: i2c@4819c000 {
@@ -759,7 +759,14 @@
 				&edma 44 0
 				&edma 45 0>;
 			dma-names = "tx0", "rx0", "tx1", "rx1";
-			status = "disabled";
+			status = "okay";
+
+	             spi@1 {
+				compatible = "microchip,encx24j600";
+				spi-max-frequency = <1000000>; /* 1MHz */
+				reg = <0x0>;
+				/* Mapping encx24j600 to IRQ is done in-code. */
+			};
 		};
 
 		usb: usb@47400000 {
