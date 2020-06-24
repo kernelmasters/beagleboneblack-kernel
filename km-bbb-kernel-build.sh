@@ -98,6 +98,24 @@ else
 	mkdir out
 fi
 
+echo "${BRed}${BRedU}Check debian packages${NC}"
+echo ""
+
+dpkg -s bison > /dev/zero
+if [ $? -eq 0 ]; then
+    echo "bison Package  is installed!"
+else
+    echo "bison Package  is NOT installed!"
+    sudo apt install bison
+fi
+dpkg -s flex > /dev/zero
+if [ $? -eq 0 ]; then
+    echo "flex Package  is installed!"
+else
+    echo "flex Package  is NOT installed!"
+    sudo apt install flex
+fi
+
 echo "${Green}-----------------------------"
 echo "${Red}Check Cross Compiler Toolcahin:"
 echo "${Green}-----------------------------${NC}"
