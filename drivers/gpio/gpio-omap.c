@@ -691,6 +691,7 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
 	struct gpio_bank *bank = gpiochip_get_data(chip);
 	unsigned long flags;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	/*
 	 * If this is the first gpio_request for the bank,
 	 * enable the bank module.
@@ -710,6 +711,7 @@ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
 {
 	struct gpio_bank *bank = gpiochip_get_data(chip);
 	unsigned long flags;
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 
 	raw_spin_lock_irqsave(&bank->lock, flags);
 	bank->mod_usage &= ~(BIT(offset));
@@ -982,6 +984,7 @@ static int omap_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
 	void __iomem *reg;
 	int dir;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	bank = gpiochip_get_data(chip);
 	reg = bank->base + bank->regs->direction;
 	raw_spin_lock_irqsave(&bank->lock, flags);
@@ -995,6 +998,7 @@ static int omap_gpio_input(struct gpio_chip *chip, unsigned offset)
 	struct gpio_bank *bank;
 	unsigned long flags;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	bank = gpiochip_get_data(chip);
 	raw_spin_lock_irqsave(&bank->lock, flags);
 	omap_set_gpio_direction(bank, offset, 1);
@@ -1006,6 +1010,7 @@ static int omap_gpio_get(struct gpio_chip *chip, unsigned offset)
 {
 	struct gpio_bank *bank;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	bank = gpiochip_get_data(chip);
 
 	if (omap_gpio_is_input(bank, offset))
@@ -1019,6 +1024,7 @@ static int omap_gpio_output(struct gpio_chip *chip, unsigned offset, int value)
 	struct gpio_bank *bank;
 	unsigned long flags;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	bank = gpiochip_get_data(chip);
 	raw_spin_lock_irqsave(&bank->lock, flags);
 	bank->set_dataout(bank, offset, value);
@@ -1085,6 +1091,7 @@ static void omap_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
 	struct gpio_bank *bank;
 	unsigned long flags;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	bank = gpiochip_get_data(chip);
 	raw_spin_lock_irqsave(&bank->lock, flags);
 	bank->set_dataout(bank, offset, value);
@@ -1243,6 +1250,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
 	struct irq_chip *irqc;
 	int ret;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	match = of_match_device(of_match_ptr(omap_gpio_match), dev);
 
 	pdata = match ? match->data : dev_get_platdata(dev);
@@ -1357,6 +1365,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
 
 	list_add_tail(&bank->node, &omap_gpio_list);
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	return 0;
 }
 
