@@ -1,11 +1,28 @@
 
 / {
-        gpio-keys {
+        gpio_keys: volume_key0 {
+                compatible = "gpio-keys";
                 pinctrl-names = "default";
                 pinctrl-0 = <&km_gpio_pins>;
-                compatible = "gpio-keys";
-	};
+                autorepeat;
 
+	        switch26 {
+                        label = "volume-up";
+                        linux,code = <115>;
+                        /*linux,code = <KEY_VOLUMEUP>;*/
+                        gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
+                        wakeup-source;
+                };
+
+                switch27 {
+                        label = "volume-down";
+                        linux,code = <114>;
+                        /*linux,code = <KEY_VOLUMEDOWN>;*/
+                        gpios = <&gpio0 27 GPIO_ACTIVE_LOW>;
+                        wakeup-source;
+                };
+
+	};
 };
 
 

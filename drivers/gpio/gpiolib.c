@@ -2628,7 +2628,6 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
 	int val = !!value;
 	int ret = 0;
 
-	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	if (!gc->set && !gc->direction_output) {
 		gpiod_warn(desc,
 		       "%s: missing set() and direction_output() operations\n",
@@ -3112,7 +3111,6 @@ static void gpiod_set_raw_value_commit(struct gpio_desc *desc, bool value)
 {
 	struct gpio_chip	*chip;
 
-	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	chip = desc->gdev->chip;
 	trace_gpio_value(desc_to_gpio(desc), 0, value);
 	chip->set(chip, gpio_chip_hwgpio(desc), value);

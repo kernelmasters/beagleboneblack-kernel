@@ -778,6 +778,7 @@ static int gpio_keys_probe(struct platform_device *pdev)
 	int i, error;
 	int wakeup = 0;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	if (!pdata) {
 		pdata = gpio_keys_get_devtree_pdata(dev);
 		if (IS_ERR(pdata))
@@ -872,6 +873,7 @@ static int gpio_keys_probe(struct platform_device *pdev)
 
 	device_init_wakeup(dev, wakeup);
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	return 0;
 }
 

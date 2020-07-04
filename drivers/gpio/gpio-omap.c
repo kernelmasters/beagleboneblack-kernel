@@ -1024,7 +1024,6 @@ static int omap_gpio_output(struct gpio_chip *chip, unsigned offset, int value)
 	struct gpio_bank *bank;
 	unsigned long flags;
 
-	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	bank = gpiochip_get_data(chip);
 	raw_spin_lock_irqsave(&bank->lock, flags);
 	bank->set_dataout(bank, offset, value);
@@ -1091,7 +1090,6 @@ static void omap_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
 	struct gpio_bank *bank;
 	unsigned long flags;
 
-	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	bank = gpiochip_get_data(chip);
 	raw_spin_lock_irqsave(&bank->lock, flags);
 	bank->set_dataout(bank, offset, value);

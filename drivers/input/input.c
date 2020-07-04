@@ -2423,6 +2423,7 @@ static int __init input_init(void)
 {
 	int err;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	err = class_register(&input_class);
 	if (err) {
 		pr_err("unable to register input_dev class\n");
@@ -2440,6 +2441,7 @@ static int __init input_init(void)
 		goto fail2;
 	}
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	return 0;
 
  fail2:	input_proc_exit();
