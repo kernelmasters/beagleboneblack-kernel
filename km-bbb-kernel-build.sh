@@ -92,11 +92,11 @@ echo "${Red}Check ./out folder:"
 echo "${Green}-----------------------------${NC}"
 
 if [ -d out ] ; then
-	echo "${Purple}out folder is found${NC}"
-else
-	echo "${Red}out folder is not found.${NC}"
-	mkdir out
+	echo "${Purple}out folder is found and remove out folder${NC}"
+	rm -rf out
 fi
+	echo "${Red} create out folder${NC}"
+	mkdir out
 
 echo "${BRed}${BRedU}Check debian packages${NC}"
 echo ""
@@ -240,7 +240,7 @@ KERNEL_UTS=$(cat "include/generated/utsrelease.h" | awk '{print $3}' | sed 's/\"
 
 
 	echo "${Purple} echo uname_r=${KERNEL_UTS} > uEnv.txt ${NC}"
-	echo uname_r=${KERNEL_UTS} > uEnv.txt
+	echo uname_r=${KERNEL_UTS} > out/uEnv.txt
 	echo "${Purple} echo board_no=1 >> uEnv.txt${NC}"
 	echo board_no=1 >> out/uEnv.txt
 
@@ -257,7 +257,7 @@ while [ ! -z "$1" ] ; do
 		cp arch/arm/boot/dts/am335x-boneblack.dtb /media/board$2/
 		echo "${Purple} echo uname_r=${KERNEL_UTS} > /media/board$2/uEnv.txt ${NC}"
 		echo uname_r=${KERNEL_UTS} > /media/board$2/uEnv.txt
-		echo "${Purple} echo board_no=$2 >> /media/board$2/uEnv.txti${NC}"
+		echo "${Purple} echo board_no=$2 >> /media/board$2/uEnv.txt${NC}"
 		echo board_no=$2 >> /media/board$2/uEnv.txt
 		#echo "${Purple}scp /home/$USER/out/vmlinuz-${KERNEL_UTS}  /home/$USER/out/${KERNEL_UTS}-modules.tar.gz /home/$USER/out/${KERNEL_UTS}-dtbs.tar.gz km@192.168.1.1$2:~/$NC"
                 #scp /home/$USER/out/vmlinuz-${KERNEL_UTS}  /home/$USER/out/${KERNEL_UTS}-modules.tar.gz /home/$USER/out/${KERNEL_UTS}-dtbs.tar.gz km@192.168.1.1$2:~/

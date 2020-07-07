@@ -1,6 +1,5 @@
 #!/bin/bash  -e
 
-
 ##############################################
 ############     READ This  ##################
 # Run the below command, output of this script file is copied in to "km-bbb-kernel-build.log" file it is useful for further analysis.
@@ -95,7 +94,7 @@ fi
 while [ ! -z "$1" ] ; do
         case $1 in
         -h|--help)
-		echo "usage: sudo $(basename $0) --mmc /dev/sdX --board "
+		echo "usage: sudo $(basename $0) --mmc /dev/sdX --tftpshare <board_no> --scp <user_name <ipaddr>"
                 ;;
 	--mmc)
 		media=$2
@@ -121,27 +120,36 @@ while [ ! -z "$1" ] ; do
 		sync
         	unmount_all_drive_partitions
 		;;
-        --board)
-		echo -e "${Purple}cp out/${KERNEL_UTS}.zImage /media/board$2/vmlinuz-${KERNEL_UTS}${NC}"
-		sudo cp out/${KERNEL_UTS}.zImage /media/board$2/vmlinuz-${KERNEL_UTS}
+        --tftpshare)
+		if [ ! -z "$2" ];then
+			echo -e "${Purple}cp out/${KERNEL_UTS}.zImage /media/board$2/vmlinuz-${KERNEL_UTS}${NC}"
+			sudo cp out/${KERNEL_UTS}.zImage /media/board$2/vmlinuz-${KERNEL_UTS}
 
-		echo -e "${Purple}cp arch/arm/boot/dts/am335x-boneblack.dtb /meida/board$2/${NC}"
-		sudo cp arch/arm/boot/dts/am335x-boneblack.dtb /media/board$2/
+			echo -e "${Purple}cp arch/arm/boot/dts/am335x-boneblack.dtb /meida/board$2/${NC}"
+			sudo cp arch/arm/boot/dts/am335x-boneblack.dtb /media/board$2/
 
-		echo -e "${Purple} echo uname_r=${KERNEL_UTS} > /media/board$2/uEnv.txt ${NC}"
-		sudo echo uname_r=${KERNEL_UTS} > /media/board$2/uEnv.txt
+			echo -e "${Purple} echo uname_r=${KERNEL_UTS} > /media/board$2/uEnv.txt ${NC}"
+			sudo echo uname_r=${KERNEL_UTS} > /media/board$2/uEnv.txt
 
-		echo -e "${Purple} echo board_no=$2 >> /media/board$2/uEnv.txti${NC}"
-		sudo echo board_no=$2 >> /media/board$2/uEnv.txt
+			echo -e "${Purple} echo board_no=$2 >> /media/board$2/uEnv.txti${NC}"
+			sudo echo board_no=$2 >> /media/board$2/uEnv.txt
+		else
+			echo "board number missing"
+		fi
 		;;
 	--scp)
-		echo "pls enter user-name of board"
-		read user_name
-		echo "pls enter ipaddress of board"
-		read ip_addr
-
-		scp out/${KERNEL_UTS}.zImage  ./out/${KERNEL_UTS}-modules.tar.gz ./out/${KERNEL_UTS}-dtbs.tar.gz $user_name@$ip_addr:~/
-                ;;
+		if [ $# -le 2 ] ; then
+			echo "pls enter user-name of board"
+			read username
+			echo "pls enter ipaddress of board"
+			read ipaddress
+			echo -e "${Purple} scp out/${KERNEL_UTS}.zImage cp out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb username@$ipaddress:~/install ${NC}"
+			scp out/${KERNEL_UTS}.zImage out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb ${username}@${ipaddress}:~/install
+		else
+			echo -e "${Purple} scp out/${KERNEL_UTS}.zImage cp out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb $2@$3:~/install ${NC}"
+			scp out/${KERNEL_UTS}.zImage out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb out/uEnv.txt $2@$3:~/install
+		fi
+		;;
         esac
         shift
 done
