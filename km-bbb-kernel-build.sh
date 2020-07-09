@@ -116,6 +116,22 @@ else
     sudo apt install flex
 fi
 
+dpkg -s make > /dev/zero
+if [ $? -eq 0 ]; then
+    echo "make Package  is installed!"
+else
+    echo "make Package  is NOT installed!"
+    sudo apt install make
+fi
+
+dpkg -s libssl-dev > /dev/zero
+if [ $? -eq 0 ]; then
+    echo "make Package  is installed!"
+else
+    echo "make Package  is NOT installed!"
+    sudo apt install libssl-dev
+fi
+
 echo "${Green}-----------------------------"
 echo "${Red}Check Cross Compiler Toolcahin:"
 echo "${Green}-----------------------------${NC}"

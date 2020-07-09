@@ -144,7 +144,7 @@ while [ ! -z "$1" ] ; do
 			echo "pls enter ipaddress of board"
 			read ipaddress
 			echo -e "${Purple} scp out/${KERNEL_UTS}.zImage cp out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb username@$ipaddress:~/install ${NC}"
-			scp out/${KERNEL_UTS}.zImage out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb ${username}@${ipaddress}:~/install
+			scp out/${KERNEL_UTS}.zImage out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb out/uEnv.txt ${username}@${ipaddress}:~/install
 		else
 			echo -e "${Purple} scp out/${KERNEL_UTS}.zImage cp out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb $2@$3:~/install ${NC}"
 			scp out/${KERNEL_UTS}.zImage out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb out/uEnv.txt $2@$3:~/install
