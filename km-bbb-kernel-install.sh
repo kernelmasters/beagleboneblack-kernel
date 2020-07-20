@@ -108,8 +108,8 @@ while [ ! -z "$1" ] ; do
 	        sudo cp out/config-${KERNEL_UTS} /mnt/rootfs/boot/
 
 		sudo mkdir -p  /mnt/rootfs/boot/dtbs/${KERNEL_UTS}
-		echo -e "${Purple}cp arch/arm/boot/dts/am335x-boneblack.dtb /mnt/rootfs/boot/dtbs/${KERNEL_UTS} ${NC}"
-		sudo cp arch/arm/boot/dts/am335x-boneblack.dtb  /mnt/rootfs/boot/dtbs/${KERNEL_UTS}/
+		echo -e "${Purple}cp arch/arm/boot/dts/km-bbb-am335x.dtb /mnt/rootfs/boot/dtbs/${KERNEL_UTS} ${NC}"
+		sudo cp arch/arm/boot/dts/km-bbb-am335x.dtb  /mnt/rootfs/boot/dtbs/${KERNEL_UTS}/
 		
 		echo -e "${Purple} echo uname_r=${KERNEL_UTS} > /mnt/rootfs/boot/uEnv.txt ${NC}"
 		echo uname_r=${KERNEL_UTS} > /mnt/rootfs/boot/uEnv.txt
@@ -125,8 +125,8 @@ while [ ! -z "$1" ] ; do
 			echo -e "${Purple}cp out/${KERNEL_UTS}.zImage /media/board$2/vmlinuz-${KERNEL_UTS}${NC}"
 			sudo cp out/${KERNEL_UTS}.zImage /media/board$2/vmlinuz-${KERNEL_UTS}
 
-			echo -e "${Purple}cp arch/arm/boot/dts/am335x-boneblack.dtb /meida/board$2/${NC}"
-			sudo cp arch/arm/boot/dts/am335x-boneblack.dtb /media/board$2/
+			echo -e "${Purple}cp arch/arm/boot/dts/km-bbb-am335x.dtb /meida/board$2/${NC}"
+			sudo cp arch/arm/boot/dts/km-bbb-am335x.dtb /media/board$2/
 
 			echo -e "${Purple} echo uname_r=${KERNEL_UTS} > /media/board$2/uEnv.txt ${NC}"
 			sudo echo uname_r=${KERNEL_UTS} > /media/board$2/uEnv.txt
@@ -143,11 +143,11 @@ while [ ! -z "$1" ] ; do
 			read username
 			echo "pls enter ipaddress of board"
 			read ipaddress
-			echo -e "${Purple} scp out/${KERNEL_UTS}.zImage cp out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb username@$ipaddress:~/install ${NC}"
-			scp out/${KERNEL_UTS}.zImage out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb out/uEnv.txt ${username}@${ipaddress}:~/install
+			echo -e "${Purple} scp out/${KERNEL_UTS}.zImage cp out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/km-bbb-am335x.dtb username@$ipaddress:~/install ${NC}"
+			scp out/${KERNEL_UTS}.zImage out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/km-bbb-am335x.dtb out/uEnv.txt ${username}@${ipaddress}:~/install
 		else
-			echo -e "${Purple} scp out/${KERNEL_UTS}.zImage cp out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb $2@$3:~/install ${NC}"
-			scp out/${KERNEL_UTS}.zImage out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/am335x-boneblack.dtb out/uEnv.txt $2@$3:~/install
+			echo -e "${Purple} scp out/${KERNEL_UTS}.zImage cp out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/km-bbb-am335x.dtb $2@$3:~/install ${NC}"
+			scp out/${KERNEL_UTS}.zImage out/config-${KERNEL_UTS} ./out/${KERNEL_UTS}-modules.tar.gz  arch/arm/boot/dts/km-bbb-am335x.dtb out/uEnv.txt $2@$3:~/install
 		fi
 		;;
         esac
