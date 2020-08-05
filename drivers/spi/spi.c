@@ -1144,6 +1144,7 @@ static void __spi_pump_messages(struct spi_controller *ctlr, bool in_kthread)
 	bool was_busy = false;
 	int ret;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);	
 	/* Lock queue */
 	spin_lock_irqsave(&ctlr->queue_lock, flags);
 
@@ -3167,6 +3168,7 @@ int spi_sync(struct spi_device *spi, struct spi_message *message)
 {
 	int ret;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);	
 	mutex_lock(&spi->controller->bus_lock_mutex);
 	ret = __spi_sync(spi, message);
 	mutex_unlock(&spi->controller->bus_lock_mutex);

@@ -98,6 +98,8 @@
 
 #define OMAP2_MCSPI_WAKEUPENABLE_WKEN	BIT(0)
 
+#define dev_vdbg	dev_dbg
+
 /* We have 2 DMA channels per CS, one for RX and one for TX */
 struct omap2_mcspi_dma {
 	struct dma_chan *dma_tx;
@@ -249,6 +251,7 @@ static void omap2_mcspi_set_cs(struct spi_device *spi, bool enable)
 	struct omap2_mcspi *mcspi = spi_master_get_devdata(spi->master);
 	u32 l;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	/* The controller handles the inverted chip selects
 	 * using the OMAP2_MCSPI_CHCONF_EPOL bit so revert
 	 * the inversion from the core spi_set_cs function.
@@ -450,6 +453,7 @@ omap2_mcspi_rx_dma(struct spi_device *spi, struct spi_transfer *xfer,
 	struct omap2_mcspi_cs	*cs = spi->controller_state;
 	void __iomem		*chstat_reg = cs->base + OMAP2_MCSPI_CHSTAT0;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);	
 	mcspi = spi_master_get_devdata(spi->master);
 	mcspi_dma = &mcspi->dma_channels[spi->chip_select];
 	count = xfer->len;
@@ -603,6 +607,7 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
 	void __iomem            *irqstat_reg;
 	int			wait_res;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);	
 	mcspi = spi_master_get_devdata(spi->master);
 	mcspi_dma = &mcspi->dma_channels[spi->chip_select];
 
@@ -708,6 +713,7 @@ omap2_mcspi_txrx_pio(struct spi_device *spi, struct spi_transfer *xfer)
 	void __iomem		*chstat_reg;
 	int			word_len;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);	
 	count = xfer->len;
 	c = count;
 	word_len = cs->word_len;
@@ -905,6 +911,9 @@ static int omap2_mcspi_setup_transfer(struct spi_device *spi,
 	struct omap2_mcspi_cs *cs = spi->controller_state;
 	struct omap2_mcspi *mcspi;
 	u32 l = 0, clkd = 0, div, extclk = 0, clkg = 0;
+
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+
 	u8 word_len = spi->bits_per_word;
 	u32 speed_hz = spi->max_speed_hz;
 
@@ -1051,6 +1060,7 @@ static int omap2_mcspi_setup(struct spi_device *spi)
 	struct omap2_mcspi_regs	*ctx = &mcspi->ctx;
 	struct omap2_mcspi_cs	*cs = spi->controller_state;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	if (!cs) {
 		cs = kzalloc(sizeof *cs, GFP_KERNEL);
 		if (!cs)
@@ -1155,6 +1165,8 @@ static int omap2_mcspi_transfer_one(struct spi_master *master,
 	int				status = 0;
 	u32				chconf;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+		
 	mcspi = spi_master_get_devdata(master);
 	mcspi_dma = mcspi->dma_channels + spi->chip_select;
 	cs = spi->controller_state;
@@ -1277,6 +1289,7 @@ static int omap2_mcspi_prepare_message(struct spi_master *master,
 	struct omap2_mcspi_regs	*ctx = &mcspi->ctx;
 	struct omap2_mcspi_cs	*cs;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	/* Only a single channel can have the FORCE bit enabled
 	 * in its chconf0 register.
 	 * Scan all channels and disable them except the current one.
@@ -1305,6 +1318,7 @@ static bool omap2_mcspi_can_dma(struct spi_master *master,
 	struct omap2_mcspi_dma *mcspi_dma =
 		&mcspi->dma_channels[spi->chip_select];
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	if (!mcspi_dma->dma_rx || !mcspi_dma->dma_tx)
 		return false;
 

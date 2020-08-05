@@ -53,6 +53,7 @@
 #define SPIDEV_MAJOR			153	/* assigned */
 #define N_SPI_MINORS			32	/* ... up to 256 */
 
+#define VERBOSE
 static DECLARE_BITMAP(minors, N_SPI_MINORS);
 
 
@@ -102,6 +103,7 @@ spidev_sync(struct spidev_data *spidev, struct spi_message *message)
 	int status;
 	struct spi_device *spi;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);	
 	spin_lock_irq(&spidev->spi_lock);
 	spi = spidev->spi;
 	spin_unlock_irq(&spidev->spi_lock);
@@ -215,6 +217,7 @@ static int spidev_message(struct spidev_data *spidev,
 	u8			*tx_buf, *rx_buf;
 	int			status = -EFAULT;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);	
 	spi_message_init(&msg);
 	k_xfers = kcalloc(n_xfers, sizeof(*k_tmp), GFP_KERNEL);
 	if (k_xfers == NULL)
@@ -322,6 +325,7 @@ spidev_get_ioc_message(unsigned int cmd, struct spi_ioc_transfer __user *u_ioc,
 {
 	u32	tmp;
 
+		printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);	
 	/* Check type, command number and direction */
 	if (_IOC_TYPE(cmd) != SPI_IOC_MAGIC
 			|| _IOC_NR(cmd) != _IOC_NR(SPI_IOC_MESSAGE(0))
@@ -349,6 +353,8 @@ spidev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	unsigned		n_ioc;
 	struct spi_ioc_transfer	*ioc;
 
+
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);	
 	/* Check type and command number */
 	if (_IOC_TYPE(cmd) != SPI_IOC_MAGIC)
 		return -ENOTTY;
@@ -463,6 +469,7 @@ spidev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		break;
 
 	default:
+		printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);	
 		/* segmented and/or full-duplex I/O request */
 		/* Check message and copy into scratch area */
 		ioc = spidev_get_ioc_message(cmd,
