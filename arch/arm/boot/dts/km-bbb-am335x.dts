@@ -66,6 +66,16 @@
                         AM33XX_PADCONF(AM335X_PIN_GPMC_AD7, PIN_INPUT_PULLUP, MUX_MODE1) /* gpmc_ad7.mmc1_dat7 */
                 >;
         };
+
+        spi1_pins:pinmux_spi1_pins {
+                pinctrl-single,pins = <
+                        AM33XX_PADCONF(AM335X_PIN_MCASP0_FSX, PIN_INPUT_PULLUP, MUX_MODE3)      /* SPI1_MOSI */
+                        AM33XX_PADCONF(AM335X_PIN_MCASP0_AXR0, PIN_INPUT_PULLUP, MUX_MODE3)     /* SPI1_MISO */
+                        AM33XX_PADCONF(AM335X_PIN_MCASP0_ACLKX, PIN_INPUT_PULLUP, MUX_MODE3)    /* SPI1_SCLK */
+                        AM33XX_PADCONF(AM335X_PIN_MCASP0_AHCLKR, PIN_INPUT_PULLUP, MUX_MODE3)   /* SPI0_CS0 (NBATTSS) */
+                >;
+        };
+
 };
 
 &uart0 {
@@ -93,4 +103,15 @@
         status = "okay";
 };
 
+&spi1 {
+        pinctrl-names = "default";
+        pinctrl-0 = <&spi1_pins>;
+
+        spidev1: spi@1 {
+                 compatible = "spidev";
+                 reg = <1>;
+                 spi-max-frequency = <16000000>;
+         };
+
+};
 
