@@ -76,6 +76,12 @@
                 >;
         };
 
+        enc28j60_pin: pinmux_enc28j60_pins {
+                   pinctrl-single,pins = <
+                         0x044 0x37     /* gpio_49 enc28j60_INT P9_23 */
+                           >;
+           };
+
 };
 
 &uart0 {
@@ -106,6 +112,16 @@
 &spi1 {
         pinctrl-names = "default";
         pinctrl-0 = <&spi1_pins>;
+
+        enc28j60: ethernet@0 {
+                   compatible = "microchip,enc28j60";
+                   pinctrl-names = "default";
+                   pinctrl-0 = <&enc28j60_pin>;
+                   reg = <0>;
+                   interrupt-parent = <&gpio1>;
+                   interrupts = <17 2>;
+                   spi-max-frequency = <12000000>;
+                };
 
         spidev1: spi@1 {
                  compatible = "spidev";
