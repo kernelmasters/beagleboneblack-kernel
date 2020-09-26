@@ -2,7 +2,7 @@
 VERSION = 4
 PATCHLEVEL = 19
 SUBLEVEL = 94
-EXTRAVERSION =
+EXTRAVERSION = gpio-framework
 NAME = "People's Front"
 
 # *DOCUMENTATION*
