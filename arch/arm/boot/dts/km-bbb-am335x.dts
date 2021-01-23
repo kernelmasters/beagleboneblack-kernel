@@ -33,7 +33,30 @@
 
 };
 
+/ {
+        gpio_keys: wakeup_key0 {
+                compatible = "gpio-keys";
+                pinctrl-names = "default";
+                /*pinctrl-0 = <&gpiokey_pins>;*/
+                autorepeat;
+
+	        switch11 {
+                        label = "wakeup";
+                        linux,code = <143>;
+                        /*linux,code = <KEY_WAKEUP>;*/
+                        gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+                        wakeup-source;
+                };
+
+	};
+};
+
 &am33xx_pinmux {
+        gpiokey_pins: pinmux_gpiokey_pins {
+                pinctrl-single,pins = <
+                        AM33XX_IOPAD(0x8DC, PIN_INPUT_PULLUP | MUX_MODE7)       /* lcd_data15.gpio0_11 */
+                >;
+        };
         uart0_pins: pinmux_uart0_pins {
                 pinctrl-single,pins = <
                         AM33XX_IOPAD(0x970, PIN_INPUT_PULLUP | MUX_MODE0)       /* uart0_rxd.uart0_rxd */
