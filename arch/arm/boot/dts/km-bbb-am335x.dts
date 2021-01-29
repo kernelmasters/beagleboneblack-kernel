@@ -48,6 +48,21 @@
                         wakeup-source;
                 };
 
+		switch26 {
+                        label = "volume down";
+                        linux,code = <114>;
+                        /*linux,code = <KEY_VOLUMEDOWN>;*/
+                        gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
+                        wakeup-source;
+                };
+
+		switch27 {
+                        label = "volume up";
+                        linux,code = <115>;
+                        /*linux,code = <KEY_VOLUMEUP>;*/
+                        gpios = <&gpio0 27 GPIO_ACTIVE_HIGH>;
+                        wakeup-source;
+                };
 	};
 };
 
