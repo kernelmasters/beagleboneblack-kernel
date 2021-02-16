@@ -1374,6 +1374,7 @@ omap_i2c_probe(struct platform_device *pdev)
 	u32 rev;
 	u16 minor, major;
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	irq = platform_get_irq(pdev, 0);
 	if (irq < 0) {
 		dev_err(&pdev->dev, "no irq resource?\n");
@@ -1521,6 +1522,7 @@ omap_i2c_probe(struct platform_device *pdev)
 	pm_runtime_mark_last_busy(omap->dev);
 	pm_runtime_put_autosuspend(omap->dev);
 
+	printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
 	return 0;
 
 err_unuse_clocks:

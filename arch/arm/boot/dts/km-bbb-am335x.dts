@@ -67,6 +67,14 @@
 };
 
 &am33xx_pinmux {
+
+       i2c1_pins:pinmux_i2c1_pins{
+               pinctrl-single,pins = <
+               0x15c   0x62    /*P9_17(I2C1_SCL)Using Default Func*/
+               0x158   0x62    /*P9_18(I2C1_SDA)*/
+                >;
+        };
+
         gpiokey_pins: pinmux_gpiokey_pins {
                 pinctrl-single,pins = <
                         AM33XX_IOPAD(0x8DC, PIN_INPUT_PULLUP | MUX_MODE7)       /* lcd_data15.gpio0_11 */
@@ -131,4 +139,18 @@
         status = "okay";
 };
 
+&i2c1 {
 
+        pinctrl-names = "default";
+        pinctrl-0 = <&i2c1_pins>;
+
+        status = "okay";
+        clock-frequency = <100000>;
+
+        rtc1: ds1307@68 {
+               compatible = "dallas,ds1307";
+               reg = <0x68>;
+                #address-cells = <1>;
+                #size-cells = <1>;
+	};
+};
