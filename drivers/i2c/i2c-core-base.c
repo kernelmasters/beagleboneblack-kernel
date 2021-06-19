@@ -60,6 +60,8 @@
 
 #define I2C_ADDR_DEVICE_ID	0x7c
 
+#define KM_DEBUG
+
 /*
  * core_lock protects i2c_adapter_idr, and guarantees that device detection,
  * deletion of detected devices are serialized
@@ -103,6 +105,9 @@ static int i2c_device_match(struct device *dev, struct device_driver *drv)
 	struct i2c_client	*client = i2c_verify_client(dev);
 	struct i2c_driver	*driver;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 
 	/* Attempt an OF style match */
 	if (i2c_of_match_device(drv->of_match_table, client))
@@ -126,6 +131,9 @@ static int i2c_device_uevent(struct device *dev, struct kobj_uevent_env *env)
 	struct i2c_client *client = to_i2c_client(dev);
 	int rc;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	rc = of_device_uevent_modalias(dev, env);
 	if (rc != -ENODEV)
 		return rc;
@@ -257,6 +265,9 @@ static void i2c_init_recovery(struct i2c_adapter *adap)
 	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
 	char *err_str;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!bri)
 		return;
 
@@ -300,6 +311,9 @@ static int i2c_smbus_host_notify_to_irq(const struct i2c_client *client)
 	struct i2c_adapter *adap = client->adapter;
 	unsigned int irq;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!adap->host_notify_domain)
 		return -ENXIO;
 
@@ -317,6 +331,9 @@ static int i2c_device_probe(struct device *dev)
 	struct i2c_driver	*driver;
 	int status;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!client)
 		return 0;
 
@@ -418,6 +435,9 @@ static int i2c_device_remove(struct device *dev)
 	struct i2c_driver	*driver;
 	int status = 0;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!client || !dev->driver)
 		return 0;
 
@@ -444,6 +464,9 @@ static void i2c_device_shutdown(struct device *dev)
 	struct i2c_client *client = i2c_verify_client(dev);
 	struct i2c_driver *driver;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!client || !dev->driver)
 		return;
 	driver = to_i2c_driver(dev->driver);
@@ -470,6 +493,9 @@ show_modalias(struct device *dev, struct device_attribute *attr, char *buf)
 	struct i2c_client *client = to_i2c_client(dev);
 	int len;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	len = of_device_modalias(dev, buf, PAGE_SIZE);
 	if (len != -ENODEV)
 		return len;
@@ -530,6 +556,9 @@ static unsigned short i2c_encode_flags_to_addr(struct i2c_client *client)
 {
 	unsigned short addr = client->addr;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	/* For some client flags, add an arbitrary offset to avoid collisions */
 	if (client->flags & I2C_CLIENT_TEN)
 		addr |= I2C_ADDR_OFFSET_TEN_BIT;
@@ -673,6 +702,9 @@ static void i2c_dev_set_name(struct i2c_adapter *adap,
 {
 	struct acpi_device *adev = ACPI_COMPANION(&client->dev);
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (info && info->dev_name) {
 		dev_set_name(&client->dev, "i2c-%s", info->dev_name);
 		return;
@@ -735,6 +767,9 @@ i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
 	struct i2c_client	*client;
 	int			status;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	client = kzalloc(sizeof *client, GFP_KERNEL);
 	if (!client)
 		return NULL;
@@ -818,6 +853,9 @@ void i2c_unregister_device(struct i2c_client *client)
 	if (!client)
 		return;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (client->dev.of_node) {
 		of_node_clear_flag(client->dev.of_node, OF_POPULATED);
 		of_node_put(client->dev.of_node);
@@ -911,6 +949,9 @@ struct i2c_client *i2c_new_secondary_device(struct i2c_client *client,
 	u32 addr = default_addr;
 	int i;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (np) {
 		i = of_property_match_string(np, "reg-names", name);
 		if (i >= 0)
@@ -936,6 +977,9 @@ unsigned int i2c_adapter_depth(struct i2c_adapter *adapter)
 {
 	unsigned int depth = 0;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	while ((adapter = i2c_parent_is_i2c_adapter(adapter)))
 		depth++;
 
@@ -966,6 +1010,9 @@ i2c_sysfs_new_device(struct device *dev, struct device_attribute *attr,
 	char *blank, end;
 	int res;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	memset(&info, 0, sizeof(struct i2c_board_info));
 
 	blank = strchr(buf, ' ');
@@ -1034,6 +1081,9 @@ i2c_sysfs_delete_device(struct device *dev, struct device_attribute *attr,
 	char end;
 	int res;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	/* Parse parameters, reject extra parameters */
 	res = sscanf(buf, "%hi%c", &addr, &end);
 	if (res < 1) {
@@ -1219,6 +1269,9 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
 {
 	int res = -EINVAL;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	/* Can't register until after driver model init */
 	if (WARN_ON(!is_registered)) {
 		res = -EAGAIN;
@@ -1320,6 +1373,9 @@ static int __i2c_add_numbered_adapter(struct i2c_adapter *adap)
 {
 	int id;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	mutex_lock(&core_lock);
 	id = idr_alloc(&i2c_adapter_idr, adap, adap->nr, adap->nr + 1, GFP_KERNEL);
 	mutex_unlock(&core_lock);
@@ -1348,6 +1404,9 @@ int i2c_add_adapter(struct i2c_adapter *adapter)
 	struct device *dev = &adapter->dev;
 	int id;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (dev->of_node) {
 		id = of_alias_get_id(dev->of_node, "i2c");
 		if (id >= 0) {
@@ -1406,6 +1465,9 @@ static void i2c_do_del_adapter(struct i2c_driver *driver,
 {
 	struct i2c_client *client, *_n;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	/* Remove the devices we created ourselves as the result of hardware
 	 * probing (using a driver's detect method) */
 	list_for_each_entry_safe(client, _n, &driver->clients, detected) {
@@ -1452,6 +1514,9 @@ void i2c_del_adapter(struct i2c_adapter *adap)
 	struct i2c_adapter *found;
 	struct i2c_client *client, *next;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	/* First make sure that this adapter was ever added */
 	mutex_lock(&core_lock);
 	found = idr_find(&i2c_adapter_idr, adap->nr);
@@ -1606,6 +1671,9 @@ int i2c_register_driver(struct module *owner, struct i2c_driver *driver)
 {
 	int res;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	/* Can't register until after driver model init */
 	if (WARN_ON(!is_registered))
 		return -EAGAIN;
@@ -1647,6 +1715,9 @@ void i2c_del_driver(struct i2c_driver *driver)
 {
 	i2c_for_each_dev(driver, __process_removed_driver);
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	driver_unregister(&driver->driver);
 	pr_debug("driver [%s] unregistered\n", driver->driver.name);
 }
@@ -1697,6 +1768,9 @@ static int i2c_cmd(struct device *dev, void *_arg)
 	struct i2c_cmd_arg	*arg = _arg;
 	struct i2c_driver	*driver;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!client || !client->dev.driver)
 		return 0;
 
@@ -1710,6 +1784,9 @@ void i2c_clients_command(struct i2c_adapter *adap, unsigned int cmd, void *arg)
 {
 	struct i2c_cmd_arg	cmd_arg;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	cmd_arg.cmd = cmd;
 	cmd_arg.arg = arg;
 	device_for_each_child(&adap->dev, &cmd_arg, i2c_cmd);
@@ -1720,6 +1797,9 @@ static int __init i2c_init(void)
 {
 	int retval;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	retval = of_alias_get_highest_id("i2c");
 
 	down_write(&__i2c_board_lock);
@@ -1763,6 +1843,9 @@ bus_err:
 
 static void __exit i2c_exit(void)
 {
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (IS_ENABLED(CONFIG_ACPI))
 		WARN_ON(acpi_reconfig_notifier_unregister(&i2c_acpi_notifier));
 	if (IS_ENABLED(CONFIG_OF_DYNAMIC))
@@ -1803,6 +1886,9 @@ static int i2c_check_for_quirks(struct i2c_adapter *adap, struct i2c_msg *msgs, 
 	int max_num = q->max_num_msgs, i;
 	bool do_len_check = true;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (q->flags & I2C_AQ_COMB) {
 		max_num = 2;
 
@@ -1868,6 +1954,9 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
 	unsigned long orig_jiffies;
 	int ret, try;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (WARN_ON(!msgs || num < 1))
 		return -EINVAL;
 
@@ -1930,6 +2019,9 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
 {
 	int ret;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	/* REVISIT the fault reporting model here is weak:
 	 *
 	 *  - When we get an error after receiving N bytes from a slave,
@@ -2057,6 +2149,9 @@ static int i2c_default_probe(struct i2c_adapter *adap, unsigned short addr)
 	int err;
 	union i2c_smbus_data dummy;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 #ifdef CONFIG_X86
 	if (addr == 0x73 && (adap->class & I2C_CLASS_HWMON)
 	 && i2c_check_functionality(adap, I2C_FUNC_SMBUS_READ_BYTE_DATA))
@@ -2088,6 +2183,9 @@ static int i2c_detect_address(struct i2c_client *temp_client,
 	int addr = temp_client->addr;
 	int err;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	/* Make sure the address is valid */
 	err = i2c_check_7bit_addr_validity_strict(addr);
 	if (err) {
@@ -2149,6 +2247,9 @@ static int i2c_detect(struct i2c_adapter *adapter, struct i2c_driver *driver)
 	int i, err = 0;
 	int adap_id = i2c_adapter_id(adapter);
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	address_list = driver->address_list;
 	if (!driver->detect || !address_list)
 		return 0;
@@ -2201,6 +2302,9 @@ i2c_new_probed_device(struct i2c_adapter *adap,
 {
 	int i;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!probe)
 		probe = i2c_default_probe;
 
@@ -2239,6 +2343,9 @@ struct i2c_adapter *i2c_get_adapter(int nr)
 {
 	struct i2c_adapter *adapter;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	mutex_lock(&core_lock);
 	adapter = idr_find(&i2c_adapter_idr, nr);
 	if (!adapter)
@@ -2257,6 +2364,9 @@ EXPORT_SYMBOL(i2c_get_adapter);
 
 void i2c_put_adapter(struct i2c_adapter *adap)
 {
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!adap)
 		return;
 

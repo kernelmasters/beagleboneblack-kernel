@@ -37,6 +37,7 @@
 #include <linux/uaccess.h>
 #include <linux/compat.h>
 
+#define KM_DEBUG
 /*
  * An i2c_dev represents an i2c_adapter ... an I2C or SMBus master, not a
  * slave (i2c_client) with which messages will be exchanged.  It's coupled
@@ -60,6 +61,9 @@ static struct i2c_dev *i2c_dev_get_by_minor(unsigned index)
 {
 	struct i2c_dev *i2c_dev;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	spin_lock(&i2c_dev_list_lock);
 	list_for_each_entry(i2c_dev, &i2c_dev_list, list) {
 		if (i2c_dev->adap->nr == index)
@@ -75,6 +79,9 @@ static struct i2c_dev *get_free_i2c_dev(struct i2c_adapter *adap)
 {
 	struct i2c_dev *i2c_dev;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (adap->nr >= I2C_MINORS) {
 		printk(KERN_ERR "i2c-dev: Out of device minors (%d)\n",
 		       adap->nr);
@@ -94,6 +101,9 @@ static struct i2c_dev *get_free_i2c_dev(struct i2c_adapter *adap)
 
 static void put_i2c_dev(struct i2c_dev *i2c_dev)
 {
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	spin_lock(&i2c_dev_list_lock);
 	list_del(&i2c_dev->list);
 	spin_unlock(&i2c_dev_list_lock);
@@ -105,6 +115,9 @@ static ssize_t name_show(struct device *dev,
 {
 	struct i2c_dev *i2c_dev = i2c_dev_get_by_minor(MINOR(dev->devt));
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!i2c_dev)
 		return -ENODEV;
 	return sprintf(buf, "%s\n", i2c_dev->adap->name);
@@ -142,6 +155,9 @@ static ssize_t i2cdev_read(struct file *file, char __user *buf, size_t count,
 	char *tmp;
 	int ret;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	struct i2c_client *client = file->private_data;
 
 	if (count > 8192)
@@ -168,6 +184,9 @@ static ssize_t i2cdev_write(struct file *file, const char __user *buf,
 	char *tmp;
 	struct i2c_client *client = file->private_data;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (count > 8192)
 		count = 8192;
 
@@ -244,6 +263,9 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
 	u8 __user **data_ptrs;
 	int i, res;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	data_ptrs = kmalloc_array(nmsgs, sizeof(u8 __user *), GFP_KERNEL);
 	if (data_ptrs == NULL) {
 		kfree(msgs);
@@ -321,6 +343,9 @@ static noinline int i2cdev_ioctl_smbus(struct i2c_client *client,
 	union i2c_smbus_data temp = {};
 	int datasize, res;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if ((size != I2C_SMBUS_BYTE) &&
 	    (size != I2C_SMBUS_QUICK) &&
 	    (size != I2C_SMBUS_BYTE_DATA) &&
@@ -400,6 +425,9 @@ static long i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	struct i2c_client *client = file->private_data;
 	unsigned long funcs;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	dev_dbg(&client->adapter->dev, "ioctl, cmd=0x%02x, arg=0x%02lx\n",
 		cmd, arg);
 
@@ -521,6 +549,9 @@ static long compat_i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned lo
 {
 	struct i2c_client *client = file->private_data;
 	unsigned long funcs;
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	switch (cmd) {
 	case I2C_FUNCS:
 		funcs = i2c_get_functionality(client->adapter);
@@ -586,6 +617,9 @@ static int i2cdev_open(struct inode *inode, struct file *file)
 	struct i2c_client *client;
 	struct i2c_adapter *adap;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	adap = i2c_get_adapter(minor);
 	if (!adap)
 		return -ENODEV;
@@ -614,6 +648,9 @@ static int i2cdev_release(struct inode *inode, struct file *file)
 {
 	struct i2c_client *client = file->private_data;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	i2c_put_adapter(client->adapter);
 	kfree(client);
 	file->private_data = NULL;
@@ -642,6 +679,9 @@ static int i2cdev_attach_adapter(struct device *dev, void *dummy)
 	struct i2c_dev *i2c_dev;
 	int res;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (dev->type != &i2c_adapter_type)
 		return 0;
 	adap = to_i2c_adapter(dev);
@@ -679,6 +719,9 @@ static int i2cdev_detach_adapter(struct device *dev, void *dummy)
 {
 	struct i2c_adapter *adap;
 	struct i2c_dev *i2c_dev;
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 
 	if (dev->type != &i2c_adapter_type)
 		return 0;
@@ -725,6 +768,9 @@ static int __init i2c_dev_init(void)
 {
 	int res;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	printk(KERN_INFO "i2c /dev entries driver\n");
 
 	res = register_chrdev_region(MKDEV(I2C_MAJOR, 0), I2C_MINORS, "i2c");
@@ -759,6 +805,9 @@ out:
 
 static void __exit i2c_dev_exit(void)
 {
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	bus_unregister_notifier(&i2c_bus_type, &i2cdev_notifier);
 	i2c_for_each_dev(NULL, i2cdev_detach_adapter);
 	class_destroy(i2c_dev_class);

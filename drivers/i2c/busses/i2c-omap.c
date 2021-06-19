@@ -40,6 +40,9 @@
 #include <linux/pm_runtime.h>
 #include <linux/pinctrl/consumer.h>
 
+
+#define KM_DEBUG
+
 /* I2C controller revisions */
 #define OMAP_I2C_OMAP1_REV_2		0x20
 
@@ -286,6 +289,10 @@ static inline u16 omap_i2c_read_reg(struct omap_i2c_dev *omap, int reg)
 
 static void __omap_i2c_init(struct omap_i2c_dev *omap)
 {
+        
+	#ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 
 	omap_i2c_write_reg(omap, OMAP_I2C_CON_REG, 0);
 
@@ -364,6 +371,9 @@ static int omap_i2c_init(struct omap_i2c_dev *omap)
 	struct clk *fclk;
 	int error;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (omap->rev >= OMAP_I2C_REV_ON_3430_3530) {
 		/*
 		 * Enabling all wakup sources to stop I2C freezing on
@@ -673,6 +683,9 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
 	u16 w;
 	int ret;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	dev_dbg(omap->dev, "addr: 0x%04x, len: %d, flags: 0x%x, stop: %d\n",
 		msg->addr, msg->len, msg->flags, stop);
 
@@ -805,6 +818,9 @@ omap_i2c_xfer_common(struct i2c_adapter *adap, struct i2c_msg msgs[], int num,
 	int i;
 	int r;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	r = pm_runtime_get_sync(omap->dev);
 	if (r < 0)
 		goto out;
@@ -844,18 +860,27 @@ out:
 static int
 omap_i2c_xfer_irq(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
 {
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	return omap_i2c_xfer_common(adap, msgs, num, false);
 }
 
 static int
 omap_i2c_xfer_polling(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
 {
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	return omap_i2c_xfer_common(adap, msgs, num, true);
 }
 
 static u32
 omap_i2c_func(struct i2c_adapter *adap)
 {
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK) |
 	       I2C_FUNC_PROTOCOL_MANGLING;
 }
@@ -910,6 +935,9 @@ omap_i2c_omap1_isr(int this_irq, void *dev_id)
 	struct omap_i2c_dev *omap = dev_id;
 	u16 iv, w;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (pm_runtime_suspended(omap->dev))
 		return IRQ_NONE;
 
@@ -1010,6 +1038,9 @@ static void omap_i2c_receive_data(struct omap_i2c_dev *omap, u8 num_bytes,
 {
 	u16		w;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	while (num_bytes--) {
 		w = omap_i2c_read_reg(omap, OMAP_I2C_DATA_REG);
 		*omap->buf++ = w;
@@ -1031,6 +1062,9 @@ static int omap_i2c_transmit_data(struct omap_i2c_dev *omap, u8 num_bytes,
 {
 	u16		w;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	while (num_bytes--) {
 		w = *omap->buf++;
 		omap->buf_len--;
@@ -1066,6 +1100,9 @@ omap_i2c_isr(int irq, void *dev_id)
 	u16 mask;
 	u16 stat;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	stat = omap_i2c_read_reg(omap, OMAP_I2C_STAT_REG);
 	mask = omap_i2c_read_reg(omap, OMAP_I2C_IE_REG);
 
@@ -1081,6 +1118,9 @@ static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
 	u16 stat;
 	int err = 0, count = 0;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	do {
 		bits = omap_i2c_read_reg(omap, OMAP_I2C_IE_REG);
 		stat = omap_i2c_read_reg(omap, OMAP_I2C_STAT_REG);
@@ -1213,6 +1253,9 @@ omap_i2c_isr_thread(int this_irq, void *dev_id)
 	int ret;
 	struct omap_i2c_dev *omap = dev_id;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	ret = omap_i2c_xfer_data(omap);
 	if (ret != -EAGAIN)
 		omap_i2c_complete_cmd(omap, ret);
@@ -1374,6 +1417,10 @@ omap_i2c_probe(struct platform_device *pdev)
 	u32 rev;
 	u16 minor, major;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
+
 	irq = platform_get_irq(pdev, 0);
 	if (irq < 0) {
 		dev_err(&pdev->dev, "no irq resource?\n");
@@ -1521,6 +1568,9 @@ omap_i2c_probe(struct platform_device *pdev)
 	pm_runtime_mark_last_busy(omap->dev);
 	pm_runtime_put_autosuspend(omap->dev);
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	return 0;
 
 err_unuse_clocks:

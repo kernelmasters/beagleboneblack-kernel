@@ -17,11 +17,15 @@
 #include <linux/of.h>
 
 #include "i2c-core.h"
+#define KM_DEBUG
 
 int i2c_slave_register(struct i2c_client *client, i2c_slave_cb_t slave_cb)
 {
 	int ret;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!client || !slave_cb) {
 		WARN(1, "insufficient data\n");
 		return -EINVAL;
@@ -64,6 +68,9 @@ int i2c_slave_unregister(struct i2c_client *client)
 {
 	int ret;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (!client->adapter->algo->unreg_slave) {
 		dev_err(&client->dev, "%s: not supported by adapter\n", __func__);
 		return -EOPNOTSUPP;
@@ -96,6 +103,9 @@ EXPORT_SYMBOL_GPL(i2c_slave_unregister);
  */
 bool i2c_detect_slave_mode(struct device *dev)
 {
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	if (IS_BUILTIN(CONFIG_OF) && dev->of_node) {
 		struct device_node *child;
 		u32 reg;
