@@ -26,6 +26,7 @@
 #include <linux/clk-provider.h>
 #include <linux/regmap.h>
 
+#define KM_DEBUG
 /*
  * We can't determine type by probing, but if we expect pre-Linux code
  * to have set the chip up as a clock (turning on the oscillator and
@@ -1399,6 +1400,9 @@ static int ds1307_probe(struct i2c_client *client,
 	struct ds1307_platform_data *pdata = dev_get_platdata(&client->dev);
 	u8			trickle_charger_setup = 0;
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	ds1307 = devm_kzalloc(&client->dev, sizeof(struct ds1307), GFP_KERNEL);
 	if (!ds1307)
 		return -ENOMEM;
@@ -1642,7 +1646,6 @@ read_rtc:
 			dev_warn(ds1307->dev, "SET TIME!\n");
 			goto read_rtc;
 		}
-
 		break;
 	default:
 		break;
@@ -1732,6 +1735,9 @@ read_rtc:
 	ds1307_hwmon_register(ds1307);
 	ds1307_clks_register(ds1307);
 
+        #ifdef KM_DEBUG
+	        printk("%s:%s:%d\n",__FILE__,__func__,__LINE__);
+        #endif
 	return 0;
 
 exit:

@@ -454,8 +454,8 @@ static long i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		 * which will be using the i2c_client node registered with
 		 * the driver model core.  Likewise, when that client has
 		 * the PEC flag already set, the i2c-dev driver won't see
-		 * (or use) this setting.
-		 */
+                 * (or use) this setting.
+ 		 */
 		if (arg)
 			client->flags |= I2C_CLIENT_PEC;
 		else

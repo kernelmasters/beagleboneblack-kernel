@@ -426,8 +426,8 @@ static int omap_i2c_init(struct omap_i2c_dev *omap)
 			       omap->flags & OMAP_I2C_FLAG_FORCE_19200_INT_CLK)
 			internal_clk = 19200;
 		else if (omap->speed > 100)
-			internal_clk = 9600;
-		else
+                       internal_clk = 9600;
+               else
 			internal_clk = 4000;
 		fclk = clk_get(omap->dev, "fck");
 		if (IS_ERR(fclk)) {
