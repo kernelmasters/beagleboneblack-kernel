@@ -126,10 +126,18 @@ fi
 
 dpkg -s libssl-dev > /dev/zero
 if [ $? -eq 0 ]; then
-    echo "make Package  is installed!"
+    echo "libssl-dev Package  is installed!"
 else
-    echo "make Package  is NOT installed!"
+    echo "libssl-dev Package  is NOT installed!"
     sudo apt install libssl-dev
+fi
+
+dpkg -s ncurses-dev > /dev/zero
+if [ $? -eq 0 ]; then
+    echo "ncurses-dev Package  is installed!"
+else
+    echo "ncurses-dev Package  is NOT installed!"
+    sudo apt install ncurses-dev
 fi
 
 echo "${Green}-----------------------------"
