@@ -140,6 +140,14 @@ else
     sudo apt install ncurses-dev
 fi
 
+dpkg -s dwarves > /dev/zero
+if [ $? -eq 0 ]; then
+    echo "dwarves Package  is installed!"
+else
+    echo "dwarves Package  is NOT installed!"
+    sudo apt install dwarves
+fi
+
 echo "${Green}-----------------------------"
 echo "${Red}Check Cross Compiler Toolcahin:"
 echo "${Green}-----------------------------${NC}"
@@ -198,6 +206,7 @@ else
                 echo "${Red}Kernel Configuration is not done. exit here"
                 exit 0
         fi
+	scripts/config --set-str SYSTEM_TRUSTED_KEYS ""
 fi
 echo "";echo ""
 
