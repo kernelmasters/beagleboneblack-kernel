@@ -40,8 +40,49 @@
 		regulator-max-microvolt = <3300000>;
 	};
 
+	gpio_keys: volume_key0 {
+		compatible = "gpio-keys";
+                pinctrl-names = "default";
+                pinctrl-0 = <&km_gpio_pins>;
+                autorepeat;
+		switch26 {
+                        label = "volume-up";
+                        linux,code = <115>;
+                        /*linux,code = <KEY_VOLUMEUP>;*/
+                        gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
+                        wakeup-source;
+                };
+
+                switch27 {
+			label = "volume-down";
+                        linux,code = <114>;
+                        /*linux,code = <KEY_VOLUMEDOWN>;*/
+                        gpios = <&gpio0 27 GPIO_ACTIVE_LOW>;
+                        wakeup-source;
+		};
+	};
+
 };
 
+&am33xx_pinmux {
+
+        km_gpio_pins: pinmux_km_gpio_pins {
+                pinctrl-single,pins = <
+                0x0d8   0x07    /*P8_31(LCD_DATA14.GPIO0_10-->USER_LED)Mode7|*/
+                0x0dc   0x37    /*P8_32(LCD_DATA15.GPIO0_11-->USER_SW)Mode7|*/
+                0x034   0x0f    /*P8_11(GPIO1_13-->LCD_D5)Mode7|*/
+                0x030   0x0f    /*P8_12(GPIO1_12-->LCD_D4)Mode7|*/
+                0x028   0x37    /*P8_14(GPIO0_26-->SW_UP)Mode7|*/
+                0x03c   0x0f    /*P8_15(GPIO1_15-->LCD_D7)Mode7|*/
+                0x038   0x0f    /*P8_16(GPIO1_14-->LCD_D6)Mode7|*/
+                0x02c   0x37    /*P8_17(GPIO0_27-->SW_DOWN)Mode7|*/
+                0x0e0   0x0f    /*P8_27(LCD_VSYNC.GPIO2_22-->LCD_RS)Mode7*/
+                0x0e8   0x0f    /*P8_28(LCD_PCLK.GPIO2_24-->LCD_EN)Mode7*/
+                0x0e4   0x0f    /*P8_29(LCD_HSYNC.GPIO2_23-->LCD_RW)M0de7*/
+                0x0d4   0x0f    /*P8_33(LCD_DATA13.GPIO0_9-->BUZZER)Mode7|*/
+                >;
+        };
+};
 &cpu0_opp_table {
 	/*
 	 * All PG 2.0 silicon may not support 1GHz but some of the early

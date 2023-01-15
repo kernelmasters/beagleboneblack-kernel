@@ -38,6 +38,16 @@ config INPUT_LEDS
 	  To compile this driver as a module, choose M here: the
 	  module will be called input-leds.
 
+config SWITCH_DEV
+	tristate "gpio device file"
+	default INPUT
+	help
+	  Say Y here enable gpio device driver.
+
+	  If unsure, say Y.
+
+	  To compile this driver as a module, choose M here
+
 config INPUT_FF_MEMLESS
 	tristate "Support for memoryless force-feedback devices"
 	help
